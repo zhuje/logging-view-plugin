@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { WSFactory } from '@openshift-console/dynamic-plugin-sdk/lib/utils/k8s/ws-factory';
 import { queryWithNamespace } from './attribute-filters';
 import { CancellableFetch, cancellableFetch, RequestInitWithTimeout } from './cancellable-fetch';
@@ -125,10 +127,41 @@ export const connectToTailSocket = ({
   tenant,
   namespace,
 }: Omit<QueryRangeParams, 'end'>) => {
+  // const extendedQuery = queryWithNamespace({
+  //   query,
+  //   namespace,
+  // });
+
+  // const params = {
+  //   query: extendedQuery,
+  //   start: String(start * 1000000),
+  //   limit: String(config?.logsLimit ?? 200),
+  // };
+
+  // const { endpoint } = getFetchConfig({ config, tenant });
+
+  // const url = `${endpoint}/loki/api/v1/tail?${new URLSearchParams(params)}`;
+
+
+
+  // return new WSFactory(url, {
+  //   host: 'auto',
+  //   path: url,
+  //   subprotocols: ['json'],
+  //   jsonParse: true,
+  // });
+
+  const { endpoint } = getFetchConfig({ config, tenant });
   const extendedQuery = queryWithNamespace({
     query,
     namespace,
   });
+
+  let ws;
+
+
+  // JZ TODO: 1. check if the params are being correctedly formatted 
+  // JZ TODO: 2. check if the data returned is being parsed correctly  
 
   const params = {
     query: extendedQuery,
@@ -136,16 +169,52 @@ export const connectToTailSocket = ({
     limit: String(config?.logsLimit ?? 200),
   };
 
-  const { endpoint } = getFetchConfig({ config, tenant });
+  // const url = `${endpoint}/loki/api/v1/tail?${new URLSearchParams(params)}`;
 
-  const url = `${endpoint}/loki/api/v1/tail?${new URLSearchParams(params)}`;
+    // const onOpen = () => {
+    //   buffer.current.clear();
+    //   setStatus(STREAM_ACTIVE);
+    // };
+    // // Handler for websocket onclose event
+    // const onClose = () => {
+    //   setStatus(STREAM_EOF);
+    // };
+    // // Handler for websocket onerror event
+    // const onError = () => {
+    //   setError(true);
+    // };
+    // // Handler for websocket onmessage event
+    // const onMessage = (msg) => {
+    //   if (msg) {
+    //     clearTimeout(timeoutIdRef.current);
+    //     const text = Base64.decode(msg);
+    //     countRef.current += buffer.current.ingest(text);
+    //     // Set a timeout here to render more logs together when initializing
+    //     timeoutIdRef.current = setTimeout(() => {
+    //       setTotalLineCount((currentLineCount) => currentLineCount + countRef.current);
+    //       countRef.current = 0;
+    //       setLines(
+    //         buffer.current.getTail() === ''
+    //           ? [...buffer.current.getLines()]
+    //           : [...buffer.current.getLines(), buffer.current.getTail()],
+    //       );
+    //       setHasTruncated(buffer.current.getHasTruncated());
+    //     }, 10);
+    //   }
+    // };
 
-  return new WSFactory(url, {
-    host: 'auto',
-    path: url,
-    subprotocols: ['json'],
-    jsonParse: true,
-  });
+
+    const url = `ws://localhost:3200/loki/api/v1/tail?query=${encodeURIComponent('{job="varlogs"}')}`
+
+    ws?.destroy();
+    ws = new WSFactory(url, {
+      host: url,
+      path: "",
+      subprotocols: ['json'],
+    })
+
+  return ws 
+
 };
 
 export const getRules = ({ config, tenant }: { config?: Config; tenant: string }) => {

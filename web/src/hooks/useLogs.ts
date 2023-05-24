@@ -436,7 +436,12 @@ export const useLogs = (
       });
     });
 
+
+    // JZ NOTE: don't change this format --- data could be empty or data.streams could be empty -- check this
     ws.current.onmessage((data) => {
+      const parsedData = JSON.parse(data)
+      console.log("JZ -- JSON.parse(data).streams: ", parsedData.streams)
+
       dispatch({
         type: 'streamingResponse',
         payload: {
@@ -445,7 +450,7 @@ export const useLogs = (
             data: {
               stats: { ingester: {}, store: {}, summary: {} },
               resultType: 'streams',
-              result: data.streams,
+              result: parsedData.streams,
             },
           },
         },
