@@ -37,8 +37,13 @@ fi
 CONSOLE_IMAGE=${CONSOLE_IMAGE:="quay.io/openshift/origin-console:latest"}
 CONSOLE_PORT=${CONSOLE_PORT:=9000}
 
+function removeEnvironment() {
+    echo "Deleting env file..."
+    rm scripts/env.list
+}
+
 function createEnvironment(){
-    echo "Creatig env file..."
+    echo "Creating env file..."
     touch scripts/env.list
 
     BRIDGE_USER_AUTH="disabled"
@@ -79,6 +84,10 @@ function createEnvironment(){
     BRIDGE_PLUGINS="logging-view-plugin=${INTERNAL_HOST}:${PLUGIN_PORT}"
     echo BRIDGE_PLUGINS=$BRIDGE_PLUGINS >> scripts/env.list
 }
+
+if [[ $CREATE_ENV == 1 ]] || [[ -f "scripts/env.list" ]]; then
+    removeEnvironment
+fi
 
 if [[ $CREATE_ENV == 1 ]] || [[ ! -f "scripts/env.list" ]]; then
     createEnvironment

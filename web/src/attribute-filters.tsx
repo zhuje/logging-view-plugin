@@ -274,8 +274,12 @@ export const getNamespaceMatcher = (namespace?: string): LabelMatcher | undefine
 
 export const queryWithNamespace = ({ query, namespace }: { query: string; namespace?: string }) => {
   const logQLQuery = new LogQLQuery(query ?? '');
-
+  console.log("JZ queryWithNamespace logQLQuery: ", logQLQuery);
+  
   logQLQuery.addSelectorMatcher(getNamespaceMatcher(namespace));
+  console.log("JZ queryWithNamespace logQLQuery.addSelectorMatcher: ", logQLQuery.addSelectorMatcher(getNamespaceMatcher(namespace))) 
+
+  console.log("JZ queryWithNamespace logQLQuery: ", logQLQuery.toString());
 
   return logQLQuery.toString();
 };

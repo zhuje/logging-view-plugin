@@ -400,6 +400,17 @@ export const useLogs = (
     dispatch({ type: 'pauseStreaming' });
   };
 
+  /**
+   * lastHour()
+   * @returns unix epoch timestamp from 1 hour ago in nanoseconds
+   */
+  const lastHour = () => {
+    const unixEpochTimestamp = Date.now()
+    const oneHour = (60 * 60 * 1000)
+    const timeInNanoseconds = (unixEpochTimestamp - oneHour) * 1000000
+    return timeInNanoseconds
+  }
+
   const startTailLog = ({
     query,
     tenant,
@@ -413,7 +424,10 @@ export const useLogs = (
     currentTenant.current = tenant ?? currentTenant.current;
     currentTime.current = Date.now();
 
-    const start = millisecondsFromDuration('1h');
+    // const start = millisecondsFromDuration('1h');
+    // Loki HTTP API -- start : nanosecond of unix epoch time  
+    const start = lastHour()
+    console.log("JZ useLogs() startTime: ", start)
 
     if (ws.current) {
       ws.current.destroy();
@@ -421,6 +435,9 @@ export const useLogs = (
 
     dispatch({ type: 'startStreaming' });
 
+    
+
+    // JZ -- connect to tail socket to stream logs from loki > loki-client.ts
     ws.current = connectToTailSocket({
       query,
       start,
@@ -436,12 +453,8 @@ export const useLogs = (
       });
     });
 
-
     // JZ NOTE: don't change this format --- data could be empty or data.streams could be empty -- check this
     ws.current.onmessage((data) => {
-      const parsedData = JSON.parse(data)
-      console.log("JZ -- JSON.parse(data).streams: ", parsedData.streams)
-
       dispatch({
         type: 'streamingResponse',
         payload: {
@@ -450,7 +463,7 @@ export const useLogs = (
             data: {
               stats: { ingester: {}, store: {}, summary: {} },
               resultType: 'streams',
-              result: parsedData.streams,
+              result: data.streams
             },
           },
         },
