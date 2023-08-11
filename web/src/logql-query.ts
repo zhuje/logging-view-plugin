@@ -36,7 +36,6 @@ const parseMatchers = (
         return false;
       } else if (selectorsNode.name === 'String') {
         value = query.slice(selectorsNode.from, selectorsNode.to);
-
         return false;
       }
     },
@@ -80,7 +79,21 @@ const parsePipelineStages = (
           'String',
         ].includes(selectorsNode.name)
       ) {
+
+        console.warn("JZ logql-query > parasePipe > value before slice : ", query)
+        console.warn("JZ logql-query >selectorsNode : ", selectorsNode, selectorsNode.from, selectorsNode.to)
+
+        // JZ TODO : check if there is a back tick in the query, then update the slice 
+        // 
+
+        const modQuery = (query ? query?.split("|= ",2)[1]?.split("|",2)[0]?.slice(1, -2)?.replace(/`/g, "\`") : '');
+
         value = query.slice(selectorsNode.from, selectorsNode.to);
+
+        console.log("PIE modQuery : ", modQuery, " ---- value : ", value)
+
+
+        console.log("JZ logql-query > parasePipe > value : ", value)
 
         if (selectorsNode.name === 'LabelFilter') {
           labelsInFilter = parseMatchers(syntaxTree, selectorsNode, query);

@@ -76,6 +76,9 @@ export const executeQueryRange = ({
     namespace,
   });
 
+  console.log("TOAST executeQueryRange() >  query ", query)
+  console.log("TOAST executeQueryRange() >  query" , extendedQuery)
+
   const params: Record<string, string> = {
     query: extendedQuery,
     start: String(start * 1000000),

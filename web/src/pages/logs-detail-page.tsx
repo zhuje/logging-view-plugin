@@ -86,6 +86,7 @@ const LogsDetailPage: React.FunctionComponent = () => {
   };
 
   const runQuery = () => {
+    console.warn("runQuery() > query ", query)
     getLogs({ query, tenant: tenant.current, namespace, timeRange, direction });
 
     if (isHistogramVisible) {
@@ -115,6 +116,8 @@ const LogsDetailPage: React.FunctionComponent = () => {
       query: queryFromInput,
       attributes: attributesForPod,
     });
+
+    console.log("JZ logs-detail page > updatedFilters : ", updatedFilters);
 
     setFilters(updatedFilters);
   };

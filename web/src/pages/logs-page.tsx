@@ -67,6 +67,9 @@ const LogsPage: React.FC = () => {
   };
 
   const runQuery = ({ queryToUse }: { queryToUse?: string } = {}) => {
+    console.warn("runQuery() > logPage > query, queryToUSe ", query, queryToUse)
+
+
     getLogs({ query: queryToUse ?? query, tenant, timeRange, direction });
 
     if (isHistogramVisible) {

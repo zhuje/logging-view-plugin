@@ -219,7 +219,32 @@ export const queryFromFilters = ({
 };
 
 const removeQuotes = (value?: string) => (value ? value.replace(/"/g, '') : '');
-const removeBacktick = (value?: string) => (value ? value.replace(/`/g, '') : '');
+
+const removeQuotes2 = (value?: string) => {
+  let newValue;  
+  if (value) {
+    newValue = value.substring(1, value.length-1);
+  } else {
+    newValue = '';
+  }
+  return newValue;
+}
+
+const removeBacktick = (value?: string) => {
+
+  // console.log("JZ before removeBacktick", value)
+  // const returnValue = (value ? value.replace(/`/g, '') : '')
+  // console.log("JZ after removeBacktick ", returnValue);
+
+  // remove back ticks at str[0] and str[-1] from string 
+  
+  console.log("JZ before removeQuotes2", value)
+  const removeQuotes = removeQuotes2(value);
+  console.log("JZ after removeQuotes2", value)
+  const cheese = `${removeQuotes}`
+  console.log("JZ after removeQuotes2 cheese:", cheese)
+  return cheese;
+}
 
 export const filtersFromQuery = ({
   query,
@@ -229,6 +254,21 @@ export const filtersFromQuery = ({
   attributes: AttributeList;
 }): Filters => {
   const filters: Filters = {};
+
+  const modQuery = (query ? query.split("|= ",2)[1]?.split("|",2)[0]?.slice(1, -2)?.replace(/`/g, "\`") : '');
+  console.log("modQuery : ", modQuery)
+
+  // if (query) {
+  //   let modQuery = query
+  //   modQuery = modQuery.split("|= ",2)[1]
+  //   console.log("modQuery1 : ", modQuery)
+  //   const v = modQuery?.split("|",2)[0]?.slice(1, -2)
+  //   console.log("modQuery2 : ", v)
+
+  // }
+
+
+  // JZ note: have to isolate backtick here before it becomes a LogQLQuery 
   const logQLQuery = new LogQLQuery(query ?? '');
 
   for (const { label, id } of attributes) {
@@ -254,9 +294,16 @@ export const filtersFromQuery = ({
         .filter(notUndefined);
       filters.severity = new Set(severityValues);
     } else if (pipelineStage.operator === '|=' && !filters.content) {
-      filters.content = new Set([removeBacktick(pipelineStage.value)]);
+
+      console.log("JZ pipelineStage.value :", pipelineStage.value)
+      console.log( "JZ removeBacktick(pipelineStage.value) : " , removeBacktick(pipelineStage.value)) 
+
+       filters.content = new Set([removeBacktick(pipelineStage.value)])
+       // filters.content = new Set([modQuery]);
     }
   }
+
+  console.warn("JZ filters ", filters)
 
   return filters;
 };
@@ -276,7 +323,11 @@ export const getNamespaceMatcher = (namespace?: string): LabelMatcher | undefine
 export const queryWithNamespace = ({ query, namespace }: { query: string; namespace?: string }) => {
   const logQLQuery = new LogQLQuery(query ?? '');
 
+  console.log("CAKE queryWithNamespace > logQLQuery : ", logQLQuery)
+
   logQLQuery.addSelectorMatcher(getNamespaceMatcher(namespace));
+
+  console.log("CAKE queryWithNamespace > logQLQuery.addSelectorMatcher : ", logQLQuery)
 
   return logQLQuery.toString();
 };
@@ -342,11 +393,48 @@ export const getContentPipelineStage = (filters?: Filters): PipelineStage | unde
 
   const [textValue] = content;
 
+  console.log("JZ textValue = ", textValue); 
+
+  console.log("JZ `\`${textValue}\``", `\`${textValue}\``)
+
   if (textValue === undefined) {
     return undefined;
   }
 
+  // JZ LEFT OFF HERE -- 
+  // see issue : https://github.com/grafana/loki/issues/2016
+  // it advises to use double backslashes to escape special characters
+  const containsBacktick = textValue.includes('`')
+  const containsQuotes = textValue.includes('"')
+  if (containsBacktick || containsQuotes) {
+
+    // const REGEXP_SPECIAL_CHAR = /[\!\#\$\%\^\&\*\)\(\+\=\.\<\>\{\}\[\]\:\;\'\"\|\~\`\_\-]/g;
+
+    // //base query
+    // const queryString = 'user+test@gmail.com';
+
+    // // prepend a backslash and insert the matched character.
+    // const escapedQuery = query.replace(REGEXP_SPECIAL_CHAR, '\\$&');
+
+    // console.log(escapedQuery); // user\+test@gmail\.com
+
+    // //for example if we want to use it in MongoDB:
+    // // db.users.find({
+    // //    email: {$regex: new RegExp(escapedQuery, "i")}
+    // // })
+
+    const REGEXP_SPECIAL_CHAR = /[\!\#\$\%\^\&\*\)\(\+\=\.\<\>\{\}\[\]\:\;\'\"\|\~\`\_\-]/g;
+    const escapedQuery = textValue.replace(REGEXP_SPECIAL_CHAR, '\\$&');
+
+    console.log("escapedQuery :", `"${escapedQuery}"`);
+
+
+    return { operator: '|=', value: `"${escapedQuery}"`};
+  }
+
+
   return { operator: '|=', value: `\`${textValue}\`` };
+  // return { operator: '|=', value: `"${textValue}"` };
 };
 
 export const getSeverityFilterPipelineStage = (filters?: Filters): PipelineStage | undefined => {

@@ -310,6 +310,8 @@ export const useLogs = (
 
       await fetchConfig();
 
+      console.log("BEANS > getMoreLogs >  useLogs() > query : ", query)
+
       const { request, abort } = executeQueryRange({
         query,
         start,
@@ -369,6 +371,8 @@ export const useLogs = (
       }
 
       await fetchConfig();
+
+      console.warn("BEANS > getLogs > useLogs > query ", query)
 
       const { request, abort } = executeQueryRange({
         query,

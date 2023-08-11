@@ -79,6 +79,8 @@ const LogsDevPage: React.FunctionComponent = () => {
   };
 
   const runQuery = ({ queryToUse }: { queryToUse?: string } = {}) => {
+
+    console.warn("runQuery() > 2 > query ", query)
     getLogs({
       query: queryToUse ?? query,
       namespace,
