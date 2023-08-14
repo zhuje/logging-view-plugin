@@ -148,14 +148,14 @@ export const TimeRangeSelectModal: React.FC<TimeRangeSelectModal> = ({
         <div>
           <label>{t('From')}</label>
           <div className="co-logs-time-range-modal__field">
-            <DatePicker onChange={setStartDate} value={startDate} />
+            <DatePicker onChange={(str, date) => setStartDate(date)} value={startDate} />
             <PrecisionTimePicker time={startTime} onChange={handleStartTimeChange} />
           </div>
         </div>
         <div>
           <label>{t('To')}</label>
           <div className="co-logs-time-range-modal__field">
-            <DatePicker onChange={setEndDate} value={endDate} />
+            <DatePicker onChange={(str, date) => setEndDate(date)} value={endDate} />
             <PrecisionTimePicker time={endTime} onChange={handleEndTimeChange} />
           </div>
           {!isRangeValid && (

@@ -12,7 +12,11 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "paths": {
+      "react": [ "./node_modules/@types/react" ]
+    }
+    
   },
   "include": ["src/**/*"]
 }
