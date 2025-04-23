@@ -30,6 +30,7 @@ import { TenantDropdown } from './tenant-dropdown';
 import { ToggleButton } from './toggle-button';
 import { TogglePlay } from './toggle-play';
 import { isOption } from './filters/filters-from-params';
+import { SchemaDropdown } from './schema-dropdown';
 
 interface LogsToolbarProps {
   query: string;
@@ -89,6 +90,9 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
   attributeList,
 }) => {
   const { t } = useTranslation('plugin__logging-view-plugin');
+
+  // testing only
+  const [isAdvancedConfigShown, setAdvancedConfigShown] = React.useState(false);
 
   const [isSeverityExpanded, setIsSeverityExpanded] = React.useState(false);
   const [isQueryShown, setIsQueryShown] = React.useState(false);
@@ -164,6 +168,7 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
             onFiltersChange={onFiltersChange}
           />
         )}
+
         <ToolbarGroup>
           <ToolbarFilter
             chips={severityFilterArray}
@@ -208,6 +213,12 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
           </ToolbarGroup>
         )}
 
+        {isAdvancedConfigShown && (
+          <ToolbarGroup>
+            <SchemaDropdown isQueryShown={isQueryShown} setIsQueryShown={setIsQueryShown} />
+          </ToolbarGroup>
+        )}
+
         <ToolbarGroup>
           <ToggleButton
             isToggled={showResources}
@@ -215,9 +226,7 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
             untoggledText={t('Show Resources')}
             toggledText={t('Hide Resources')}
           />
-        </ToolbarGroup>
 
-        <ToolbarGroup>
           <ToggleButton
             isToggled={showStats}
             onToggle={onShowStatsToggle}
@@ -225,43 +234,53 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
             toggledText={t('Hide Stats')}
             data-test={TestIds.ShowStatsToggle}
           />
-        </ToolbarGroup>
 
-        {onDownloadCSV && (
-          <ToolbarGroup>
-            <Button variant="secondary" isInline onClick={onDownloadCSV}>
-              {t('Export as CSV')}
-            </Button>
-          </ToolbarGroup>
-        )}
-
-        <ToolbarGroup>
-          <ExecuteVolumeButton onClick={onVolumeRun} isDisabled={isDisabled} />
-        </ToolbarGroup>
-
-        {!isQueryShown && (
-          <>
-            <ToolbarGroup>
-              <ExecuteQueryButton onClick={onQueryRun} isDisabled={isDisabled} />
-            </ToolbarGroup>
-            {invalidQueryErrorMessage && (
-              <ToolbarGroup>
-                <Alert variant="danger" isInline isPlain title={invalidQueryErrorMessage} />
-              </ToolbarGroup>
-            )}
-          </>
-        )}
-
-        <Spacer />
-
-        <ToolbarGroup>
           <ToggleButton
-            isToggled={isQueryShown}
-            onToggle={setIsQueryShown}
-            untoggledText={t('Show Query')}
-            toggledText={t('Hide Query')}
-            data-test={TestIds.ShowQueryToggle}
+            isToggled={isAdvancedConfigShown}
+            onToggle={setAdvancedConfigShown}
+            untoggledText={`Show Advanced Configurations`}
+            toggledText={`Hide Advanced Configurations`}
+            data-test={`AdvancedConfig`}
           />
+        </ToolbarGroup>
+
+        <ToolbarGroup>
+          {onDownloadCSV && (
+            <ToolbarGroup>
+              <Button variant="secondary" isInline onClick={onDownloadCSV}>
+                {t('Export as CSV')}
+              </Button>
+            </ToolbarGroup>
+          )}
+
+          <ToolbarGroup>
+            <ExecuteVolumeButton onClick={onVolumeRun} isDisabled={isDisabled} />
+          </ToolbarGroup>
+
+          {!isQueryShown && (
+            <>
+              <ToolbarGroup>
+                <ExecuteQueryButton onClick={onQueryRun} isDisabled={isDisabled} />
+              </ToolbarGroup>
+              {invalidQueryErrorMessage && (
+                <ToolbarGroup>
+                  <Alert variant="danger" isInline isPlain title={invalidQueryErrorMessage} />
+                </ToolbarGroup>
+              )}
+            </>
+          )}
+
+          <Spacer />
+
+          <ToolbarGroup>
+            <ToggleButton
+              isToggled={isQueryShown}
+              onToggle={setIsQueryShown}
+              untoggledText={t('Show Query')}
+              toggledText={t('Hide Query')}
+              data-test={TestIds.ShowQueryToggle}
+            />
+          </ToolbarGroup>
         </ToolbarGroup>
 
         {enableStreaming && (
