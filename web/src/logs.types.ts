@@ -1,3 +1,9 @@
+export enum Schema {
+  viaq = 'viaq',
+  otel = 'otel',
+  select = 'select', // allows dropdown to appear to select either viaq of otel
+}
+
 export type Config = {
   useTenantInHeader?: boolean;
   isStreamingEnabledInDefaultPage?: boolean;
@@ -5,6 +11,7 @@ export type Config = {
   alertingRuleNamespaceLabelKey?: string;
   timeout?: number;
   logsLimit: number;
+  schema?: Schema;
 };
 
 export type MetricValue = Array<number | string>;

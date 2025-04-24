@@ -9,6 +9,7 @@ import {
   QueryRangeResponse,
   VolumeRangeResponse,
   TimeRange,
+  Schema,
 } from '../logs.types';
 import {
   connectToTailSocket,
@@ -27,6 +28,9 @@ const STREAMING_MAX_LOGS_LIMIT = 1e3;
 const defaultConfig: Config = {
   isStreamingEnabledInDefaultPage: false,
   logsLimit: 100,
+
+  // JZ DELETE ME. TESTING ONLY.
+  schema: Schema.select,
 };
 
 const isAbortError = (error: unknown): boolean =>

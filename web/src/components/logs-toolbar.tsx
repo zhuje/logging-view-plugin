@@ -31,6 +31,8 @@ import { ToggleButton } from './toggle-button';
 import { TogglePlay } from './toggle-play';
 import { isOption } from './filters/filters-from-params';
 import { SchemaDropdown } from './schema-dropdown';
+import { useLogs } from '../hooks/useLogs';
+import { Schema } from '../logs.types';
 
 interface LogsToolbarProps {
   query: string;
@@ -91,11 +93,18 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
 }) => {
   const { t } = useTranslation('plugin__logging-view-plugin');
 
-  // testing only
-  const [isSchemaShown, setSchemaShown] = React.useState(false);
-
   const [isSeverityExpanded, setIsSeverityExpanded] = React.useState(false);
   const [isQueryShown, setIsQueryShown] = React.useState(false);
+  const [isSchemaShown, setSchemaShown] = React.useState(false);
+
+  const { config } = useLogs();
+  React.useEffect(() => {
+    if (config?.schema === Schema.select) {
+      setSchemaShown(true);
+    }
+  }, [config]);
+  console.log({ beans: config?.schema });
+
   const severityFilter: Set<Severity> = filters?.severity
     ? new Set(Array.from(filters?.severity).map(severityFromString).filter(notUndefined))
     : new Set();
@@ -233,14 +242,6 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
             untoggledText={t('Show Stats')}
             toggledText={t('Hide Stats')}
             data-test={TestIds.ShowStatsToggle}
-          />
-
-          <ToggleButton
-            isToggled={isSchemaShown}
-            onToggle={setSchemaShown}
-            untoggledText={`Show Schema`}
-            toggledText={`Hide Schema`}
-            data-test={TestIds.SchemaToggle}
           />
         </ToolbarGroup>
 
