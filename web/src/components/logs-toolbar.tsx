@@ -92,18 +92,26 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
   attributeList,
 }) => {
   const { t } = useTranslation('plugin__logging-view-plugin');
+  const defaultSchema: Schema = Schema.viaq;
 
   const [isSeverityExpanded, setIsSeverityExpanded] = React.useState(false);
   const [isQueryShown, setIsQueryShown] = React.useState(false);
   const [isSchemaShown, setSchemaShown] = React.useState(false);
+  const [currentSchema, setCurrentSchema] = React.useState<Schema>(defaultSchema);
 
   const { config } = useLogs();
+
+  // ConfigMap is updated
   React.useEffect(() => {
     if (config?.schema === Schema.select) {
       setSchemaShown(true);
     }
-  }, [config]);
-  console.log({ beans: config?.schema });
+  }, [config?.schema]);
+
+  // <SchemaDropdown /> selection occurs
+  React.useEffect(() => {
+    console.log('JZ SCHEMA CHANGED:', currentSchema);
+  }, [currentSchema]);
 
   const severityFilter: Set<Severity> = filters?.severity
     ? new Set(Array.from(filters?.severity).map(severityFromString).filter(notUndefined))
@@ -224,7 +232,11 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
 
         {isSchemaShown && (
           <ToolbarGroup>
-            <SchemaDropdown isQueryShown={isQueryShown} setIsQueryShown={setIsQueryShown} />
+            <SchemaDropdown
+              isQueryShown={isQueryShown}
+              setIsQueryShown={setIsQueryShown}
+              setCurrentSchema={setCurrentSchema}
+            />
           </ToolbarGroup>
         )}
 

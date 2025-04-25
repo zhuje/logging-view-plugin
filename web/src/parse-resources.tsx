@@ -6,6 +6,7 @@ export enum ResourceLabel {
   Namespace = 'Namespace',
   Pod = 'Pod',
   Severity = 'Severity',
+  LogType = 'LogType',
 }
 
 const ResourceToStreamLabels: Record<ResourceLabel, { otel: string; viaq: string }> = {
@@ -24,6 +25,10 @@ const ResourceToStreamLabels: Record<ResourceLabel, { otel: string; viaq: string
   [ResourceLabel.Severity]: {
     otel: 'severity_text',
     viaq: 'level',
+  },
+  [ResourceLabel.LogType]: {
+    otel: 'openshift_log_type',
+    viaq: 'log_type',
   },
 };
 

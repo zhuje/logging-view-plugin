@@ -8,31 +8,39 @@ import {
   SelectList,
   SelectOption,
 } from '@patternfly/react-core';
+import { Schema } from '../logs.types';
 
 type SchemaDropdownProps = {
   isQueryShown: boolean;
   setIsQueryShown: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrentSchema: React.Dispatch<React.SetStateAction<Schema>>;
 };
 
 export const SchemaDropdown: React.FC<SchemaDropdownProps> = ({
   isQueryShown,
   setIsQueryShown,
+  setCurrentSchema,
 }) => {
   const { t } = useTranslation('plugin__logging-view-plugin');
 
-  const [selectedValue, setSelectedValue] = React.useState('Schema');
+  const [selectedValue, setSelectedValue] = React.useState<Schema | undefined>();
   const [isOpen, setIsOpen] = React.useState(false);
+
+  const isValidSchema = (value: string | number | undefined) => {
+    return typeof value === 'string' && Object.values(Schema).includes(value as Schema);
+  };
 
   const onToggle = () => setIsOpen(!isOpen);
   const onSelect = (
     _: React.MouseEvent<Element, MouseEvent> | undefined,
     value: string | number | undefined,
   ) => {
-    if (typeof value === 'string') {
-      setSelectedValue(value);
+    if (isValidSchema(value)) {
       if (!isQueryShown) {
         setIsQueryShown(true);
       }
+      setSelectedValue(value as Schema);
+      setCurrentSchema(value as Schema);
     }
     setIsOpen(false);
   };
@@ -44,7 +52,7 @@ export const SchemaDropdown: React.FC<SchemaDropdownProps> = ({
       isExpanded={isOpen}
       data-test={TestIds.TenantToggle}
     >
-      {selectedValue}
+      {selectedValue ?? 'Schema'}
     </MenuToggle>
   );
 
@@ -57,10 +65,10 @@ export const SchemaDropdown: React.FC<SchemaDropdownProps> = ({
       toggle={toggle}
     >
       <SelectList>
-        <SelectOption key={'otel'} value={'otel'}>
+        <SelectOption key={'otel'} value={Schema.otel}>
           otel
         </SelectOption>
-        <SelectOption key={'viaq'} value={'viaq'}>
+        <SelectOption key={'viaq'} value={Schema.viaq}>
           viaQ
         </SelectOption>
       </SelectList>
