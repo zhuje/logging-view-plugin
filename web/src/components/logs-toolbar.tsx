@@ -32,7 +32,7 @@ import { TogglePlay } from './toggle-play';
 import { isOption } from './filters/filters-from-params';
 import { SchemaDropdown } from './schema-dropdown';
 import { useLogs } from '../hooks/useLogs';
-import { Schema } from '../logs.types';
+import { Schema, DEFAULT_SCHEMA } from '../logs.types';
 
 interface LogsToolbarProps {
   query: string;
@@ -42,6 +42,7 @@ interface LogsToolbarProps {
   invalidQueryErrorMessage?: string | null;
   tenant?: string;
   onTenantSelect?: (tenant: string) => void;
+  onSchemaSelect?: (schema: Schema) => void;
   enableStreaming?: boolean;
   isStreaming?: boolean;
   severityFilter?: Set<Severity>;
@@ -77,6 +78,7 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
   invalidQueryErrorMessage,
   tenant = 'application',
   onTenantSelect,
+  onSchemaSelect,
   onStreamingToggle,
   onShowResourcesToggle,
   onDownloadCSV,
@@ -92,12 +94,11 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
   attributeList,
 }) => {
   const { t } = useTranslation('plugin__logging-view-plugin');
-  const defaultSchema: Schema = Schema.viaq;
 
   const [isSeverityExpanded, setIsSeverityExpanded] = React.useState(false);
   const [isQueryShown, setIsQueryShown] = React.useState(false);
   const [isSchemaShown, setSchemaShown] = React.useState(false);
-  const [currentSchema, setCurrentSchema] = React.useState<Schema>(defaultSchema);
+  const [currentSchema, setCurrentSchema] = React.useState<Schema>(DEFAULT_SCHEMA);
 
   const { config } = useLogs();
 
@@ -236,6 +237,7 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
               isQueryShown={isQueryShown}
               setIsQueryShown={setIsQueryShown}
               setCurrentSchema={setCurrentSchema}
+              onSchemaSelected={onSchemaSelect}
             />
           </ToolbarGroup>
         )}

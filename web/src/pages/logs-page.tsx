@@ -41,6 +41,7 @@ const LogsPage: React.FC = () => {
     setQueryInURL,
     tenant,
     setTenantInURL,
+    setSchemaInURL,
     areResourcesShown,
     setShowResourcesInURL,
     areStatsShown,
@@ -214,6 +215,7 @@ const LogsPage: React.FC = () => {
           onQueryRun={runQuery}
           onVolumeRun={runVolume}
           onTenantSelect={setTenantInURL}
+          onSchemaSelect={setSchemaInURL}
           tenant={tenant}
           isStreaming={isStreaming}
           onStreamingToggle={handleToggleStreaming}

@@ -3,6 +3,7 @@ export enum Schema {
   otel = 'otel',
   select = 'select', // allows dropdown to appear to select either viaq of otel
 }
+export const DEFAULT_SCHEMA: Schema = Schema.viaq;
 
 export type Config = {
   useTenantInHeader?: boolean;

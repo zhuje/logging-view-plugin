@@ -14,16 +14,18 @@ type SchemaDropdownProps = {
   isQueryShown: boolean;
   setIsQueryShown: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentSchema: React.Dispatch<React.SetStateAction<Schema>>;
+  onSchemaSelected: ((schema: Schema) => void) | undefined;
 };
 
 export const SchemaDropdown: React.FC<SchemaDropdownProps> = ({
   isQueryShown,
   setIsQueryShown,
   setCurrentSchema,
+  onSchemaSelected,
 }) => {
   const { t } = useTranslation('plugin__logging-view-plugin');
 
-  const [selectedValue, setSelectedValue] = React.useState<Schema | undefined>();
+  const [selectedValue, setSelectedValue] = React.useState<Schema>(Schema.select);
   const [isOpen, setIsOpen] = React.useState(false);
 
   const isValidSchema = (value: string | number | undefined) => {
@@ -41,7 +43,12 @@ export const SchemaDropdown: React.FC<SchemaDropdownProps> = ({
       }
       setSelectedValue(value as Schema);
       setCurrentSchema(value as Schema);
+
+      // set schema in URL
+      console.log('JZ onSelect', { selectedValue });
+      onSchemaSelected?.(value as Schema);
     }
+
     setIsOpen(false);
   };
 
