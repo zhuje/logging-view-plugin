@@ -26,8 +26,8 @@ import { RefreshIntervalDropdown } from '../components/refresh-interval-dropdown
 import { TimeRangeDropdown } from '../components/time-range-dropdown';
 import { ToggleHistogramButton } from '../components/toggle-histogram-button';
 import { useLogs } from '../hooks/useLogs';
-import { defaultQueryFromTenant, useURLState } from '../hooks/useURLState';
-import { Direction, isMatrixResult } from '../logs.types';
+import { DEFAULT_TENANT, defaultQueryFromTenant, useURLState } from '../hooks/useURLState';
+import { Direction, isMatrixResult, Schema } from '../logs.types';
 import { TestIds } from '../test-ids';
 import { CenteredContainer } from '../components/centered-container';
 import { downloadCSV } from '../download-csv';
@@ -41,6 +41,7 @@ const LogsPage: React.FC = () => {
     setQueryInURL,
     tenant,
     setTenantInURL,
+    schema,
     setSchemaInURL,
     areResourcesShown,
     setShowResourcesInURL,
@@ -148,6 +149,17 @@ const LogsPage: React.FC = () => {
   const handleRefreshClick = () => {
     runQuery();
   };
+
+  React.useEffect(() => {
+    let model: Schema | undefined;
+    if (schema) {
+      model = schema as Schema;
+    }
+    const queryToUse = defaultQueryFromTenant(DEFAULT_TENANT, model);
+    setQueryInURL(queryToUse);
+
+    runQuery({ queryToUse });
+  }, [schema]);
 
   React.useEffect(() => {
     const queryToUse = updateQuery(filters, tenant);

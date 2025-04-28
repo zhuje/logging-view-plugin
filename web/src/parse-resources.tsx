@@ -9,7 +9,7 @@ export enum ResourceLabel {
   LogType = 'LogType',
 }
 
-const ResourceToStreamLabels: Record<ResourceLabel, { otel: string; viaq: string }> = {
+export const ResourceToStreamLabels: Record<ResourceLabel, { otel: string; viaq: string }> = {
   [ResourceLabel.Container]: {
     otel: 'k8s_container_name',
     viaq: 'kubernetes_container_name',

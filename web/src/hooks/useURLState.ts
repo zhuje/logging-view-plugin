@@ -2,11 +2,11 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom-v5-compat';
 import { filtersFromQuery } from '../attribute-filters';
 import { AttributeList, Filters } from '../components/filters/filter.types';
-import { Direction, TimeRange } from '../logs.types';
+import { DEFAULT_SCHEMA, Schema, Direction, TimeRange } from '../logs.types';
 import { intervalFromTimeRange } from '../time-range';
 import { useQueryParams } from './useQueryParams';
-import { Schema, DEFAULT_SCHEMA } from '../logs.types';
 import { useLogs } from './useLogs';
+import { ResourceLabel, ResourceToStreamLabels } from '../parse-resources';
 
 interface UseURLStateHook {
   defaultQuery?: string;
@@ -23,12 +23,18 @@ const SCHEMA_PARAM_KEY = 'schema';
 const SHOW_RESOURCES_PARAM_KEY = 'showResources';
 const SHOW_STATS_PARAM_KEY = 'showStats';
 
-const DEFAULT_TENANT = 'application';
+export const DEFAULT_TENANT = 'application';
 const DEFAULT_SHOW_RESOURCES = '0';
 const DEFAULT_SHOW_STATS = '0';
 
-export const defaultQueryFromTenant = (tenant: string = DEFAULT_TENANT) =>
-  `{ log_type="${tenant}" } | json`;
+export const defaultQueryFromTenant = (tenant: string = DEFAULT_TENANT, schema?: Schema) => {
+  const logType = ResourceToStreamLabels[ResourceLabel.LogType];
+
+  if (schema === 'otel') {
+    return `{ ${logType.otel}="${tenant}" } `;
+  }
+  return `{ ${logType.viaq}="${tenant}" } | json`;
+};
 
 const getDirectionValue = (value?: string | null): Direction =>
   value !== null ? (value === 'forward' ? 'forward' : 'backward') : 'backward';
