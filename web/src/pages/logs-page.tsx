@@ -133,6 +133,7 @@ const LogsPage: React.FC = () => {
         filters: selectedFilters,
         attributes: initialAvailableAttributes,
         tenant: selectedTenant,
+        schema: schema,
       });
 
       setQueryInURL(updatedQuery);
@@ -150,13 +151,17 @@ const LogsPage: React.FC = () => {
     runQuery();
   };
 
+  // JZ: If schema is change, reset input and filters to initial Values
   React.useEffect(() => {
     let model: Schema | undefined;
     if (schema) {
       model = schema as Schema;
     }
+
     const queryToUse = defaultQueryFromTenant(DEFAULT_TENANT, model);
     setQueryInURL(queryToUse);
+
+    // remove all other filters
 
     runQuery({ queryToUse });
   }, [schema]);

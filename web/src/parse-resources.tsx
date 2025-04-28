@@ -1,4 +1,4 @@
-import { Resource } from './logs.types';
+import { Resource, Schema } from './logs.types';
 import { notUndefined } from './value-utils';
 
 export enum ResourceLabel {
@@ -8,6 +8,33 @@ export enum ResourceLabel {
   Severity = 'Severity',
   LogType = 'LogType',
 }
+
+export const getOtelLabels = (): Record<ResourceLabel | 'Schema', string> => {
+  const otelMap = Object.fromEntries(
+    Object.entries(ResourceToStreamLabels).map(([key, value]) => [key, value.otel]),
+  );
+  return {
+    ...otelMap,
+    Schema: Schema.otel, // manually add Schema key
+  } as Record<ResourceLabel | 'Schema', string>;
+};
+
+export const getViaQLabels = (): Record<ResourceLabel | 'Schema', string> => {
+  const otelMap = Object.fromEntries(
+    Object.entries(ResourceToStreamLabels).map(([key, value]) => [key, value.viaq]),
+  );
+  return {
+    ...otelMap,
+    Schema: Schema.viaq, // manually add Schema key
+  } as Record<ResourceLabel | 'Schema', string>;
+};
+
+export const getStreamLabels = (schema: Schema | undefined) => {
+  if (schema == Schema.otel) {
+    return getOtelLabels();
+  }
+  return getViaQLabels();
+};
 
 export const ResourceToStreamLabels: Record<ResourceLabel, { otel: string; viaq: string }> = {
   [ResourceLabel.Container]: {

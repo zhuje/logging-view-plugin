@@ -111,7 +111,7 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
 
   // <SchemaDropdown /> selection occurs
   React.useEffect(() => {
-    console.log('JZ SCHEMA CHANGED:', currentSchema);
+    // console.log('JZ SCHEMA CHANGED:', currentSchema);
   }, [currentSchema]);
 
   const severityFilter: Set<Severity> = filters?.severity

@@ -5,7 +5,8 @@ import { AttributeList, Filters, Option } from './components/filters/filter.type
 import { LogQLQuery, LabelMatcher, PipelineStage } from './logql-query';
 import { Severity, severityAbbreviations, severityFromString } from './severity';
 import { executeLabelValue } from './loki-client';
-import { Config } from './logs.types';
+import { Config, Schema } from './logs.types';
+import { getStreamLabels, ResourceLabel } from './parse-resources';
 
 const RESOURCES_ENDPOINT = '/api/kubernetes/api/v1';
 
@@ -297,20 +298,29 @@ export const queryFromFilters = ({
   filters,
   attributes,
   tenant,
+  schema,
 }: {
   existingQuery: string;
   filters?: Filters;
   attributes: AttributeList;
   tenant?: string;
+  schema?: Schema | undefined;
 }): string => {
   const query = new LogQLQuery(existingQuery);
+
+  const streamLabels = getStreamLabels(schema);
+  const tenantLabel = streamLabels[ResourceLabel.LogType];
 
   if (!filters) {
     return query.toString();
   }
 
   if (tenant) {
-    query.addSelectorMatcher({ label: 'log_type', operator: '=', value: `"${tenant}"` });
+    query.addSelectorMatcher({
+      label: tenantLabel,
+      operator: '=',
+      value: `"${tenant}"`,
+    });
   }
 
   const contentPipelineStage = getContentPipelineStage(filters);

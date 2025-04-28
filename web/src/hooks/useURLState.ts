@@ -50,7 +50,11 @@ export const useURLState = ({
   const { config } = useLogs();
 
   const initialTenant = queryParams.get(TENANT_PARAM_KEY) ?? defaultTenant;
-  const initialSchema = queryParams.get(SCHEMA_PARAM_KEY) ?? config?.schema;
+
+  const rawSchema = queryParams.get(SCHEMA_PARAM_KEY) ?? config?.schema;
+  const initialSchema: Schema | undefined =
+    rawSchema === Schema.otel || rawSchema === Schema.viaq ? rawSchema : undefined;
+
   const initialQuery =
     queryParams.get(QUERY_PARAM_KEY) ?? defaultQuery ?? defaultQueryFromTenant(initialTenant);
   const initialTimeRangeStart = queryParams.get(TIME_RANGE_START);
@@ -84,9 +88,19 @@ export const useURLState = ({
     navigate(`${location.pathname}?${queryParams.toString()}`);
   };
 
+  // JZ if schema is changed, reinitial everything to defaults
   const setSchemaInURL = (selectedSchema: Schema) => {
-    queryParams.set(SCHEMA_PARAM_KEY, selectedSchema);
-    navigate(`${location.pathname}?${queryParams.toString()}`);
+    // Start fresh: no existing query params
+    const newQueryParams = new URLSearchParams();
+
+    // Set only initial query and schema
+    setQuery(initialQuery.trim());
+    newQueryParams.set(SCHEMA_PARAM_KEY, selectedSchema);
+
+    console.log({ queryParams: newQueryParams.toString() });
+
+    // Navigate to same path with new query string
+    navigate(`${location.pathname}?${newQueryParams.toString()}`);
   };
 
   const setShowResourcesInURL = (showResources: boolean) => {
@@ -121,9 +135,13 @@ export const useURLState = ({
   };
 
   React.useEffect(() => {
+    const schemaParam = queryParams.get(SCHEMA_PARAM_KEY);
+    const typedSchemaValue: Schema | undefined =
+      schemaParam === Schema.otel || schemaParam === Schema.viaq ? schemaParam : undefined;
+
     const queryValue = queryParams.get(QUERY_PARAM_KEY) ?? initialQuery;
     const tenantValue = queryParams.get(TENANT_PARAM_KEY) ?? DEFAULT_TENANT;
-    const schemaValue = queryParams.get(SCHEMA_PARAM_KEY) ?? DEFAULT_SCHEMA;
+    const schemaValue = typedSchemaValue ?? DEFAULT_SCHEMA;
     const showResourcesValue = queryParams.get(SHOW_RESOURCES_PARAM_KEY) ?? DEFAULT_SHOW_RESOURCES;
     const showStatsValue = queryParams.get(SHOW_STATS_PARAM_KEY) ?? DEFAULT_SHOW_STATS;
     const timeRangeStartValue = queryParams.get(TIME_RANGE_START);

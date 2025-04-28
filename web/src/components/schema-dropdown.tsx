@@ -44,8 +44,6 @@ export const SchemaDropdown: React.FC<SchemaDropdownProps> = ({
       setSelectedValue(value as Schema);
       setCurrentSchema(value as Schema);
 
-      // set schema in URL
-      console.log('JZ onSelect', { selectedValue });
       onSchemaSelected?.(value as Schema);
     }
 
