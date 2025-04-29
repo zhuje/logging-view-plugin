@@ -84,6 +84,7 @@ const LogsDetailPage: React.FC<LogsDetailPageProps> = ({
   const {
     query,
     setQueryInURL,
+    schema,
     areResourcesShown,
     setShowResourcesInURL,
     areStatsShown,
@@ -149,6 +150,7 @@ const LogsDetailPage: React.FC<LogsDetailPageProps> = ({
     const updatedFilters = filtersFromQuery({
       query: queryFromInput,
       attributes: attributesForPod,
+      schema: schema,
     });
 
     setFilters(updatedFilters);

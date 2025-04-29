@@ -115,6 +115,7 @@ const LogsPage: React.FC = () => {
     const updatedFilters = filtersFromQuery({
       query: queryFromInput,
       attributes: initialAvailableAttributes,
+      schema: schema,
     });
 
     setFilters(updatedFilters);

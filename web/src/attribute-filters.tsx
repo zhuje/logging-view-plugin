@@ -310,6 +310,7 @@ export const queryFromFilters = ({
 
   const streamLabels = getStreamLabels(schema);
   const tenantLabel = streamLabels[ResourceLabel.LogType];
+  const severityLabel = streamLabels[ResourceLabel.Severity];
 
   if (!filters) {
     return query.toString();
@@ -335,16 +336,18 @@ export const queryFromFilters = ({
     query.removePipelineStage({ operator: '|=' });
   }
 
-  const severityPipelineStage = getSeverityFilterPipelineStage(filters);
+  const severityPipelineStage = getSeverityFilterPipelineStage(filters, schema);
 
   if (severityPipelineStage) {
-    query.removePipelineStage({}, { matchLabel: 'level' }).addPipelineStage(severityPipelineStage, {
-      placement: 'end',
-    });
+    query
+      .removePipelineStage({}, { matchLabel: `${severityLabel}` })
+      .addPipelineStage(severityPipelineStage, {
+        placement: 'end',
+      });
   }
 
   if (filters?.severity === undefined || filters.severity.size === 0) {
-    query.removePipelineStage({}, { matchLabel: 'level' });
+    query.removePipelineStage({}, { matchLabel: `${severityLabel}` });
   }
 
   query.addSelectorMatcher(getMatchersFromFilters(filters));
@@ -367,12 +370,17 @@ const removeBacktick = (value?: string) => (value ? value.replace(/`/g, '') : ''
 export const filtersFromQuery = ({
   query,
   attributes,
+  schema,
 }: {
   query?: string;
   attributes: AttributeList;
+  schema: Schema.viaq | Schema.otel | undefined;
 }): Filters => {
   const filters: Filters = {};
   const logQLQuery = new LogQLQuery(query ?? '');
+
+  const streamLabels = getStreamLabels(schema);
+  const severityLabel = streamLabels[ResourceLabel.Severity];
 
   for (const { label, id } of attributes) {
     if (label && label.length > 0) {
@@ -387,7 +395,7 @@ export const filtersFromQuery = ({
   for (const pipelineStage of logQLQuery.pipeline) {
     if (
       pipelineStage.operator === '|' &&
-      pipelineStage.labelsInFilter?.every(({ label }) => label === 'level') &&
+      pipelineStage.labelsInFilter?.every(({ label }) => label === `${severityLabel}`) &&
       !filters.severity
     ) {
       const severityValues: Array<Severity> = pipelineStage.labelsInFilter
@@ -503,18 +511,26 @@ export const getContentPipelineStage = (filters?: Filters): PipelineStage | unde
   return { operator: '|=', value: `\`${textValue}\`` };
 };
 
-export const getSeverityFilterPipelineStage = (filters?: Filters): PipelineStage | undefined => {
+export const getSeverityFilterPipelineStage = (
+  filters?: Filters,
+  schema?: Schema,
+): PipelineStage | undefined => {
   if (!filters) {
     return undefined;
   }
 
   const severity = filters.severity;
 
+  const labels = getStreamLabels(schema);
+  const severityLabel = labels.Severity;
+
   if (!severity) {
     return undefined;
   }
 
-  const unknownFilter = severity.has('unknown') ? 'level="unknown" or level=""' : '';
+  const unknownFilter = severity.has('unknown')
+    ? `${severityLabel}="unknown" or ${severityLabel}=""`
+    : '';
 
   const severityFilters = Array.from(severity).flatMap((group: string | undefined) => {
     if (group === 'unknown' || group === undefined) {
@@ -524,7 +540,8 @@ export const getSeverityFilterPipelineStage = (filters?: Filters): PipelineStage
     return severityAbbreviations[group as Severity];
   });
 
-  const levelsfilter = severityFilters.length > 0 ? `level=~"${severityFilters.join('|')}"` : '';
+  const levelsfilter =
+    severityFilters.length > 0 ? `${severityLabel}=~"${severityFilters.join('|')}"` : '';
 
   const allFilters = [unknownFilter, levelsfilter].filter(notEmptyString);
 

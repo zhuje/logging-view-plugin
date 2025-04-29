@@ -46,6 +46,7 @@ const LogsDevPage: React.FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => 
   const {
     query,
     setQueryInURL,
+    schema,
     areResourcesShown,
     setShowResourcesInURL,
     areStatsShown,
@@ -123,6 +124,7 @@ const LogsDevPage: React.FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => 
     const updatedFilters = filtersFromQuery({
       query: queryFromInput,
       attributes: initialAvailableAttributes,
+      schema: schema,
     });
 
     setFilters(updatedFilters);

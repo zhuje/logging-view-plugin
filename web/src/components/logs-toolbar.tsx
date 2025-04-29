@@ -32,7 +32,7 @@ import { TogglePlay } from './toggle-play';
 import { isOption } from './filters/filters-from-params';
 import { SchemaDropdown } from './schema-dropdown';
 import { useLogs } from '../hooks/useLogs';
-import { Schema, DEFAULT_SCHEMA } from '../logs.types';
+import { Schema } from '../logs.types';
 
 interface LogsToolbarProps {
   query: string;
@@ -98,7 +98,6 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
   const [isSeverityExpanded, setIsSeverityExpanded] = React.useState(false);
   const [isQueryShown, setIsQueryShown] = React.useState(false);
   const [isSchemaShown, setSchemaShown] = React.useState(false);
-  const [currentSchema, setCurrentSchema] = React.useState<Schema>(DEFAULT_SCHEMA);
 
   const { config } = useLogs();
 
@@ -108,11 +107,6 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
       setSchemaShown(true);
     }
   }, [config?.schema]);
-
-  // <SchemaDropdown /> selection occurs
-  React.useEffect(() => {
-    // console.log('JZ SCHEMA CHANGED:', currentSchema);
-  }, [currentSchema]);
 
   const severityFilter: Set<Severity> = filters?.severity
     ? new Set(Array.from(filters?.severity).map(severityFromString).filter(notUndefined))
@@ -236,7 +230,6 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
             <SchemaDropdown
               isQueryShown={isQueryShown}
               setIsQueryShown={setIsQueryShown}
-              setCurrentSchema={setCurrentSchema}
               onSchemaSelected={onSchemaSelect}
             />
           </ToolbarGroup>

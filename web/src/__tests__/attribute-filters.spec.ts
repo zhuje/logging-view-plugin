@@ -8,6 +8,9 @@ import {
   queryFromFilters,
 } from '../attribute-filters';
 import { AttributeList } from '../components/filters/filter.types';
+import { Schema } from '../logs.types';
+
+const schema: Schema.otel | Schema.viaq | undefined = Schema.viaq;
 
 export const availableAttributes: AttributeList = [
   {
@@ -356,6 +359,7 @@ describe('Attribute filters', () => {
       const filters = filtersFromQuery({
         query,
         attributes: availableAttributes,
+        schema: schema,
       });
       expect(filters).toEqual(expectedFilters);
     });

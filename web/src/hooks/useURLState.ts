@@ -54,9 +54,9 @@ export const useURLState = ({
   const rawSchema = queryParams.get(SCHEMA_PARAM_KEY) ?? config?.schema;
   const initialSchema: Schema | undefined =
     rawSchema === Schema.otel || rawSchema === Schema.viaq ? rawSchema : undefined;
-
   const initialQuery =
     queryParams.get(QUERY_PARAM_KEY) ?? defaultQuery ?? defaultQueryFromTenant(initialTenant);
+
   const initialTimeRangeStart = queryParams.get(TIME_RANGE_START);
   const initialTimeRangeEnd = queryParams.get(TIME_RANGE_END);
   const initialDirection = queryParams.get(DIRECTION);
@@ -69,7 +69,7 @@ export const useURLState = ({
   const [tenant, setTenant] = React.useState(initialTenant);
   const [schema, setSchema] = React.useState(initialSchema);
   const [filters, setFilters] = React.useState<Filters | undefined>(
-    filtersFromQuery({ query: initialQuery, attributes }),
+    filtersFromQuery({ query: initialQuery, attributes, schema }),
   );
   const [areResourcesShown, setAreResourcesShown] = React.useState<boolean>(initialResorcesShown);
   const [areStatsShown, setAreStatsShown] = React.useState<boolean>(intitalStatsShown);
@@ -94,10 +94,7 @@ export const useURLState = ({
     const newQueryParams = new URLSearchParams();
 
     // Set only initial query and schema
-    setQuery(initialQuery.trim());
     newQueryParams.set(SCHEMA_PARAM_KEY, selectedSchema);
-
-    console.log({ queryParams: newQueryParams.toString() });
 
     // Navigate to same path with new query string
     navigate(`${location.pathname}?${newQueryParams.toString()}`);
@@ -154,7 +151,7 @@ export const useURLState = ({
     setDirection(getDirectionValue(directionValue));
     setAreResourcesShown(showResourcesValue === '1');
     setAreStatsShown(showStatsValue === '1');
-    setFilters(filtersFromQuery({ query: queryValue, attributes }));
+    setFilters(filtersFromQuery({ query: queryValue, attributes, schema }));
     setTimeRange((prevTimeRange) => {
       if (!timeRangeStartValue || !timeRangeEndValue) {
         return undefined;

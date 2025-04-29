@@ -13,14 +13,12 @@ import { Schema } from '../logs.types';
 type SchemaDropdownProps = {
   isQueryShown: boolean;
   setIsQueryShown: React.Dispatch<React.SetStateAction<boolean>>;
-  setCurrentSchema: React.Dispatch<React.SetStateAction<Schema>>;
   onSchemaSelected: ((schema: Schema) => void) | undefined;
 };
 
 export const SchemaDropdown: React.FC<SchemaDropdownProps> = ({
   isQueryShown,
   setIsQueryShown,
-  setCurrentSchema,
   onSchemaSelected,
 }) => {
   const { t } = useTranslation('plugin__logging-view-plugin');
@@ -42,8 +40,6 @@ export const SchemaDropdown: React.FC<SchemaDropdownProps> = ({
         setIsQueryShown(true);
       }
       setSelectedValue(value as Schema);
-      setCurrentSchema(value as Schema);
-
       onSchemaSelected?.(value as Schema);
     }
 
