@@ -9,8 +9,10 @@ import {
   VolumeRangeResponse,
   RulesResponse,
   MatrixResult,
+  Schema,
 } from './logs.types';
 import { durationFromTimestamp } from './value-utils';
+import { getStreamLabels, ResourceLabel } from './parse-resources';
 
 const LOKI_ENDPOINT = '/api/proxy/plugin/logging-view-plugin/backend';
 
@@ -42,6 +44,7 @@ type HistogramQuerParams = {
   config?: Config;
   namespace?: string;
   tenant: string;
+  schema: Schema | undefined;
 };
 
 type LokiTailQueryParams = {
@@ -191,15 +194,19 @@ export const executeHistogramQuery = ({
   config,
   tenant,
   namespace,
+  schema,
 }: HistogramQuerParams): CancellableFetch<QueryRangeResponse<MatrixResult>> => {
   const intervalString = durationFromTimestamp(interval);
+  const labels = getStreamLabels(schema);
+  const labelSeverity = labels[ResourceLabel.Severity];
 
   const extendedQuery = queryWithNamespace({
     query,
     namespace,
   });
 
-  const histogramQuery = `sum by (level) (count_over_time(${extendedQuery} [${intervalString}]))`;
+  // eslint-disable-next-line max-len
+  const histogramQuery = `sum by (${labelSeverity}) (count_over_time(${extendedQuery} [${intervalString}]))`;
 
   const params = {
     query: histogramQuery,

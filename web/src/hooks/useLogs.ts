@@ -610,11 +610,13 @@ export const useLogs = (
     tenant,
     timeRange,
     namespace,
+    schema,
   }: {
     query: string;
     tenant?: string;
     timeRange?: TimeRange;
     namespace?: string;
+    schema?: Schema;
   }) => {
     if (query.length === 0) {
       dispatch({ type: 'histogramError', payload: { error: new Error('Query is empty') } });
@@ -655,6 +657,7 @@ export const useLogs = (
         config: currentConfig.current,
         tenant: currentTenant.current,
         namespace,
+        schema,
       });
 
       histogramAbort.current = abort;

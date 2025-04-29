@@ -97,7 +97,7 @@ const LogsPage: React.FC = () => {
     getLogs({ query: queryToUse ?? query, tenant, timeRange, direction });
 
     if (isHistogramVisible) {
-      getHistogram({ query: queryToUse ?? query, tenant, timeRange });
+      getHistogram({ query: queryToUse ?? query, tenant, timeRange, schema });
     }
   };
 
@@ -226,6 +226,7 @@ const LogsPage: React.FC = () => {
             isLoading={isLoadingHistogramData}
             error={histogramError}
             onChangeTimeRange={setTimeRangeInURL}
+            schema={schema}
           />
         )}
         <LogsToolbar
