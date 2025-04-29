@@ -152,85 +152,96 @@ export const initialAvailableAttributes: AttributeList = [
   },
 ];
 
-export const availableAttributes = (tenant: string, config: Config): AttributeList => [
-  {
-    name: 'Content',
-    id: 'content',
-    valueType: 'text',
-  },
-  {
-    name: 'Namespaces',
-    label: 'kubernetes_namespace_name',
-    id: 'namespace',
-    options: resourceDataSource({ resource: 'namespaces' }),
-    valueType: 'checkbox-select',
-  },
-  {
-    name: 'Pods',
-    label: 'kubernetes_pod_name',
-    id: 'pod',
-    options: getPodAttributeOptions(tenant, config),
-    valueType: 'checkbox-select',
-  },
-  {
-    name: 'Containers',
-    label: 'kubernetes_container_name',
-    id: 'container',
-    options: resourceDataSource({
-      resource: 'pods',
-      mapper: (resource) =>
-        resource?.spec?.containers.map((container) => ({
-          option: `${resource?.metadata?.name} / ${container.name}`,
-          value: `${resource?.metadata?.name} / ${container.name}`,
-        })) ?? [],
-    }),
-    expandSelection: (selections) => {
-      const podSelections = new Set<string>();
-      const containerSelections = new Set<string>();
+export const availableAttributes = (
+  tenant: string,
+  config: Config,
+  schema?: Schema,
+): AttributeList => {
+  const labels = getStreamLabels(schema);
+  const namespaceLabel = labels[ResourceLabel.Namespace];
+  const podLabel = labels[ResourceLabel.Pod];
+  const containerLabel = labels[ResourceLabel.Container];
 
-      for (const container of selections.values()) {
-        if (container.includes(' / ')) {
-          const [pod, containerName] = container.split(' / ');
-          podSelections.add(pod);
-          containerSelections.add(containerName);
+  return [
+    {
+      name: 'Content',
+      id: 'content',
+      valueType: 'text',
+    },
+    {
+      name: 'Namespaces',
+      label: namespaceLabel,
+      id: 'namespace',
+      options: resourceDataSource({ resource: 'namespaces' }),
+      valueType: 'checkbox-select',
+    },
+    {
+      name: 'Pods',
+      label: podLabel,
+      id: 'pod',
+      options: getPodAttributeOptions(tenant, config),
+      valueType: 'checkbox-select',
+    },
+    {
+      name: 'Containers',
+      label: containerLabel,
+      id: 'container',
+      options: resourceDataSource({
+        resource: 'pods',
+        mapper: (resource) =>
+          resource?.spec?.containers.map((container) => ({
+            option: `${resource?.metadata?.name} / ${container.name}`,
+            value: `${resource?.metadata?.name} / ${container.name}`,
+          })) ?? [],
+      }),
+      expandSelection: (selections) => {
+        const podSelections = new Set<string>();
+        const containerSelections = new Set<string>();
+
+        for (const container of selections.values()) {
+          if (container.includes(' / ')) {
+            const [pod, containerName] = container.split(' / ');
+            podSelections.add(pod);
+            containerSelections.add(containerName);
+          }
         }
-      }
 
-      return new Map([
-        ['pod', podSelections],
-        ['container', containerSelections],
-      ]);
+        return new Map([
+          ['pod', podSelections],
+          ['container', containerSelections],
+        ]);
+      },
+      isItemSelected: (value, filters) => {
+        const parts = value.split(' / ');
+        if (parts.length !== 2) {
+          return false;
+        }
+
+        const [pod, container] = parts;
+
+        if (
+          (!filters.pod || filters.pod.size === 0) &&
+          filters.container &&
+          filters.container.size > 0
+        ) {
+          return filters.container.has(container);
+        }
+
+        if (
+          !filters.pod ||
+          filters.pod.size === 0 ||
+          !filters.container ||
+          filters.container.size === 0
+        ) {
+          return false;
+        }
+
+        return filters.pod.has(pod) && filters.container.has(container);
+      },
+      valueType: 'checkbox-select',
     },
-    isItemSelected: (value, filters) => {
-      const parts = value.split(' / ');
-      if (parts.length !== 2) {
-        return false;
-      }
-
-      const [pod, container] = parts;
-
-      if (
-        (!filters.pod || filters.pod.size === 0) &&
-        filters.container &&
-        filters.container.size > 0
-      ) {
-        return filters.container.has(container);
-      }
-
-      if (
-        !filters.pod ||
-        filters.pod.size === 0 ||
-        !filters.container ||
-        filters.container.size === 0
-      ) {
-        return false;
-      }
-
-      return filters.pod.has(pod) && filters.container.has(container);
-    },
-    valueType: 'checkbox-select',
-  },
-];
+  ];
+};
 
 export const availableDevConsoleAttributes = (tenant: string, config: Config): AttributeList => [
   {
@@ -240,7 +251,7 @@ export const availableDevConsoleAttributes = (tenant: string, config: Config): A
   },
   {
     name: 'Namespaces',
-    label: 'kubernetes_namespace_name',
+    label: 'k8s_namespace_name',
     id: 'namespace',
     options: projectsDataSource(),
     valueType: 'checkbox-select',
@@ -350,7 +361,7 @@ export const queryFromFilters = ({
     query.removePipelineStage({}, { matchLabel: `${severityLabel}` });
   }
 
-  query.addSelectorMatcher(getMatchersFromFilters(filters));
+  query.addSelectorMatcher(getMatchersFromFilters(filters, schema));
 
   attributes.forEach(({ id, label }) => {
     if (label) {
@@ -464,25 +475,29 @@ export const getK8sMatcherFromSet = (
   };
 };
 
-export const getMatchersFromFilters = (filters?: Filters): Array<LabelMatcher> => {
+export const getMatchersFromFilters = (filters?: Filters, schema?: Schema): Array<LabelMatcher> => {
   if (!filters) {
     return [];
   }
 
   const matchers: Array<LabelMatcher | undefined> = [];
+  const labels = getStreamLabels(schema);
+  const namespaceLabel = labels[ResourceLabel.Namespace];
+  const podLabel = labels[ResourceLabel.Pod];
+  const containerLabel = labels[ResourceLabel.Container];
 
   for (const key of Object.keys(filters)) {
     const value = filters[key];
     if (value) {
       switch (key) {
         case 'namespace':
-          matchers.push(getK8sMatcherFromSet('kubernetes_namespace_name', value));
+          matchers.push(getK8sMatcherFromSet(namespaceLabel, value));
           break;
         case 'pod':
-          matchers.push(getK8sMatcherFromSet('kubernetes_pod_name', value));
+          matchers.push(getK8sMatcherFromSet(podLabel, value));
           break;
         case 'container':
-          matchers.push(getK8sMatcherFromSet('kubernetes_container_name', value));
+          matchers.push(getK8sMatcherFromSet(containerLabel, value));
           break;
       }
     }

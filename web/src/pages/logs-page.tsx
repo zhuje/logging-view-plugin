@@ -36,25 +36,6 @@ const LogsPage: React.FC = () => {
   const { t } = useTranslation('plugin__logging-view-plugin');
 
   const [isHistogramVisible, setIsHistogramVisible] = React.useState(false);
-  const {
-    query,
-    setQueryInURL,
-    tenant,
-    setTenantInURL,
-    schema,
-    setSchemaInURL,
-    areResourcesShown,
-    setShowResourcesInURL,
-    areStatsShown,
-    setShowStatsInURL,
-    filters,
-    setFilters,
-    setTimeRangeInURL,
-    timeRange,
-    interval,
-    direction,
-    setDirectionInURL,
-  } = useURLState({ attributes: initialAvailableAttributes });
 
   const {
     histogramData,
@@ -77,6 +58,26 @@ const LogsPage: React.FC = () => {
     toggleStreaming,
     config,
   } = useLogs();
+
+  const {
+    query,
+    setQueryInURL,
+    tenant,
+    setTenantInURL,
+    schema,
+    setSchemaInURL,
+    areResourcesShown,
+    setShowResourcesInURL,
+    areStatsShown,
+    setShowStatsInURL,
+    filters,
+    setFilters,
+    setTimeRangeInURL,
+    timeRange,
+    interval,
+    direction,
+    setDirectionInURL,
+  } = useURLState({ attributes: initialAvailableAttributes });
 
   const handleToggleStreaming = () => {
     toggleStreaming({ query });
@@ -144,7 +145,7 @@ const LogsPage: React.FC = () => {
   };
 
   const attributeList = React.useMemo(
-    () => (tenant ? availableAttributes(tenant, config) : []),
+    () => (tenant ? availableAttributes(tenant, config, schema) : []),
     [tenant, config],
   );
 
