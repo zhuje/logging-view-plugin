@@ -156,13 +156,13 @@ const LogsPage: React.FC = () => {
   React.useEffect(() => {
     let model: Schema | undefined;
     const configSchema = config?.schema;
-    if (configSchema) {
-      if (configSchema == Schema.select) {
-        model = schema; // get selected schema from dropdown
-      } else {
-        model = configSchema; // get schema from ConfigMap
-      }
+
+    if (configSchema == Schema.select) {
+      model = schema; // get selected schema from dropdown
+    } else {
+      model = configSchema; // get schema from ConfigMap
     }
+
     const queryToUse = defaultQueryFromTenant(DEFAULT_TENANT, model);
 
     setSchemaInURL(model);
