@@ -30,7 +30,7 @@ const defaultConfig: Config = {
   logsLimit: 100,
 
   // JZ DELETE ME. TESTING ONLY.
-  schema: Schema.otel,
+  schema: Schema.select,
 };
 
 const isAbortError = (error: unknown): boolean =>

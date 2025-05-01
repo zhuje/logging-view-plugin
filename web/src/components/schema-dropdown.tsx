@@ -26,23 +26,18 @@ export const SchemaDropdown: React.FC<SchemaDropdownProps> = ({
   const [selectedValue, setSelectedValue] = React.useState<Schema>(Schema.select);
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const isValidSchema = (value: string | number | undefined) => {
-    return typeof value === 'string' && Object.values(Schema).includes(value as Schema);
-  };
-
   const onToggle = () => setIsOpen(!isOpen);
   const onSelect = (
     _: React.MouseEvent<Element, MouseEvent> | undefined,
     value: string | number | undefined,
   ) => {
-    if (isValidSchema(value)) {
-      if (!isQueryShown) {
-        setIsQueryShown(true);
-      }
+    if (!isQueryShown) {
+      setIsQueryShown(true);
+    }
+    if (value != selectedValue) {
       setSelectedValue(value as Schema);
       onSchemaSelected?.(value as Schema);
     }
-
     setIsOpen(false);
   };
 

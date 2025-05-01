@@ -161,12 +161,11 @@ const LogsPage: React.FC = () => {
         model = schema; // get selected schema from dropdown
       } else {
         model = configSchema; // get schema from ConfigMap
-        setSchemaInURL(configSchema);
       }
     }
     const queryToUse = defaultQueryFromTenant(DEFAULT_TENANT, model);
 
-    setSchemaInURL(configSchema);
+    setSchemaInURL(model);
     setQueryInURL(queryToUse);
 
     runQuery({ queryToUse });

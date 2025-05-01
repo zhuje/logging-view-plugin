@@ -91,8 +91,9 @@ export const useURLState = ({
   };
 
   const setSchemaInURL = (currentSchema: Schema | undefined) => {
-    // if selecting a new schema from dropdown, clear all previous schema filters
     if (currentSchema && config?.schema === Schema.select) {
+      // if switching to a different schema from dropdown selection,
+      // then clear all previous schema filters
       const newQueryParams = new URLSearchParams();
       newQueryParams.set(SCHEMA_PARAM_KEY, currentSchema);
       navigate(`${location.pathname}?${newQueryParams.toString()}`);
