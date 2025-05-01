@@ -124,7 +124,7 @@ const LogsPage: React.FC = () => {
 
   const updateQuery = (selectedFilters?: Filters, selectedTenant?: string): string => {
     if ((!selectedFilters || Object.keys(selectedFilters).length === 0) && !selectedTenant) {
-      const defaultQuery = defaultQueryFromTenant();
+      const defaultQuery = defaultQueryFromTenant(schema);
 
       setQueryInURL(defaultQuery);
 
@@ -153,20 +153,24 @@ const LogsPage: React.FC = () => {
     runQuery();
   };
 
-  // JZ: If schema is change, reset input and filters to initial Values
   React.useEffect(() => {
     let model: Schema | undefined;
-    if (schema) {
-      model = schema as Schema;
+    const configSchema = config?.schema;
+    if (configSchema) {
+      if (configSchema == Schema.select) {
+        model = schema; // get selected schema from dropdown
+      } else {
+        model = configSchema; // get schema from ConfigMap
+        setSchemaInURL(configSchema);
+      }
     }
-
     const queryToUse = defaultQueryFromTenant(DEFAULT_TENANT, model);
+
+    setSchemaInURL(configSchema);
     setQueryInURL(queryToUse);
 
-    // remove all other filters
-
     runQuery({ queryToUse });
-  }, [schema]);
+  }, [config?.schema, schema]);
 
   React.useEffect(() => {
     const queryToUse = updateQuery(filters, tenant);

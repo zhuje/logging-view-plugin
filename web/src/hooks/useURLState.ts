@@ -29,7 +29,6 @@ const DEFAULT_SHOW_STATS = '0';
 
 export const defaultQueryFromTenant = (tenant: string = DEFAULT_TENANT, schema?: Schema) => {
   const logType = ResourceToStreamLabels[ResourceLabel.LogType];
-
   if (schema === 'otel') {
     return `{ ${logType.otel}="${tenant}" } `;
   }
@@ -51,11 +50,14 @@ export const useURLState = ({
 
   const initialTenant = queryParams.get(TENANT_PARAM_KEY) ?? defaultTenant;
 
-  const rawSchema = queryParams.get(SCHEMA_PARAM_KEY) ?? config?.schema;
+  const configSchema = config?.schema;
   const initialSchema: Schema | undefined =
-    rawSchema === Schema.otel || rawSchema === Schema.viaq ? rawSchema : undefined;
+    configSchema === Schema.otel || configSchema === Schema.viaq ? configSchema : undefined;
+
   const initialQuery =
-    queryParams.get(QUERY_PARAM_KEY) ?? defaultQuery ?? defaultQueryFromTenant(initialTenant);
+    queryParams.get(QUERY_PARAM_KEY) ??
+    defaultQuery ??
+    defaultQueryFromTenant(initialTenant, config?.schema);
 
   const initialTimeRangeStart = queryParams.get(TIME_RANGE_START);
   const initialTimeRangeEnd = queryParams.get(TIME_RANGE_END);
@@ -88,16 +90,16 @@ export const useURLState = ({
     navigate(`${location.pathname}?${queryParams.toString()}`);
   };
 
-  // JZ if schema is changed, reinitial everything to defaults
-  const setSchemaInURL = (selectedSchema: Schema) => {
-    // Start fresh: no existing query params
-    const newQueryParams = new URLSearchParams();
-
-    // Set only initial query and schema
-    newQueryParams.set(SCHEMA_PARAM_KEY, selectedSchema);
-
-    // Navigate to same path with new query string
-    navigate(`${location.pathname}?${newQueryParams.toString()}`);
+  const setSchemaInURL = (currentSchema: Schema | undefined) => {
+    // if selecting a new schema from dropdown, clear all previous schema filters
+    if (currentSchema && config?.schema === Schema.select) {
+      const newQueryParams = new URLSearchParams();
+      newQueryParams.set(SCHEMA_PARAM_KEY, currentSchema);
+      navigate(`${location.pathname}?${newQueryParams.toString()}`);
+    } else {
+      queryParams.set(SCHEMA_PARAM_KEY, currentSchema as string);
+      navigate(`${location.pathname}?${queryParams.toString()}`);
+    }
   };
 
   const setShowResourcesInURL = (showResources: boolean) => {
