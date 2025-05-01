@@ -154,6 +154,12 @@ const LogsPage: React.FC = () => {
   };
 
   React.useEffect(() => {
+    const queryToUse = updateQuery(filters, tenant);
+
+    runQuery({ queryToUse });
+  }, [timeRange, isHistogramVisible, direction, tenant]);
+
+  React.useEffect(() => {
     let model: Schema | undefined;
     const configSchema = config?.schema;
 
@@ -170,12 +176,6 @@ const LogsPage: React.FC = () => {
 
     runQuery({ queryToUse });
   }, [config?.schema, schema]);
-
-  React.useEffect(() => {
-    const queryToUse = updateQuery(filters, tenant);
-
-    runQuery({ queryToUse });
-  }, [timeRange, isHistogramVisible, direction, tenant]);
 
   const isQueryEmpty = query === '';
 
