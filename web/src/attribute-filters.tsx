@@ -129,38 +129,51 @@ const resourceDataSource =
     return listItems.flatMap(mapper).filter(({ value }) => notEmptyString(value));
   };
 
+const getAttributeLabels = (config: Config, schema: Schema | undefined) => {
+  const model = config?.schema == Schema.select ? schema : config?.schema;
+  const labels = getStreamLabels(model);
+  const namespaceLabel = labels[ResourceLabel.Namespace];
+  const podLabel = labels[ResourceLabel.Pod];
+  const containerLabel = labels[ResourceLabel.Container];
+  return { namespaceLabel, podLabel, containerLabel };
+};
+
 // The logs-page and the logs-dev-page both need a default set of attributes to pass
 // to queryFromFilters and filtersFromQuery which only need id and label
-export const initialAvailableAttributes: AttributeList = [
-  {
-    name: 'Namespaces',
-    label: 'kubernetes_namespace_name',
-    id: 'namespace',
-    valueType: 'checkbox-select',
-  },
-  {
-    name: 'Pods',
-    label: 'kubernetes_pod_name',
-    id: 'pod',
-    valueType: 'checkbox-select',
-  },
-  {
-    name: 'Containers',
-    label: 'kubernetes_container_name',
-    id: 'container',
-    valueType: 'checkbox-select',
-  },
-];
+export const initialAvailableAttributes = (schema: Schema | undefined): AttributeList => {
+  const labels = getStreamLabels(schema);
+  const namespaceLabel = labels[ResourceLabel.Namespace];
+  const podLabel = labels[ResourceLabel.Pod];
+  const containerLabel = labels[ResourceLabel.Container];
+
+  return [
+    {
+      name: 'Namespaces',
+      label: namespaceLabel,
+      id: 'namespace',
+      valueType: 'checkbox-select',
+    },
+    {
+      name: 'Pods',
+      label: podLabel,
+      id: 'pod',
+      valueType: 'checkbox-select',
+    },
+    {
+      name: 'Containers',
+      label: containerLabel,
+      id: 'container',
+      valueType: 'checkbox-select',
+    },
+  ];
+};
 
 export const availableAttributes = (
   tenant: string,
   config: Config,
   schema?: Schema,
 ): AttributeList => {
-  const labels = getStreamLabels(schema);
-  const namespaceLabel = labels[ResourceLabel.Namespace];
-  const podLabel = labels[ResourceLabel.Pod];
-  const containerLabel = labels[ResourceLabel.Container];
+  const { namespaceLabel, podLabel, containerLabel } = getAttributeLabels(config, schema);
 
   return [
     {
@@ -179,7 +192,7 @@ export const availableAttributes = (
       name: 'Pods',
       label: podLabel,
       id: 'pod',
-      options: getPodAttributeOptions(tenant, config),
+      options: getPodAttributeOptions(tenant, config, schema),
       valueType: 'checkbox-select',
     },
     {
@@ -243,43 +256,52 @@ export const availableAttributes = (
   ];
 };
 
-export const availableDevConsoleAttributes = (tenant: string, config: Config): AttributeList => [
-  {
-    name: 'Content',
-    id: 'content',
-    valueType: 'text',
-  },
-  {
-    name: 'Namespaces',
-    label: 'k8s_namespace_name',
-    id: 'namespace',
-    options: projectsDataSource(),
-    valueType: 'checkbox-select',
-  },
-  {
-    name: 'Pods',
-    label: 'kubernetes_pod_name',
-    id: 'pod',
-    options: lokiLabelValuesDataSource({
-      config,
-      tenant,
-      labelName: 'kubernetes_pod_name',
-    }),
-    valueType: 'checkbox-select',
-  },
-  {
-    name: 'Containers',
-    label: 'kubernetes_container_name',
-    id: 'container',
-    options: lokiLabelValuesDataSource({
-      config,
-      tenant,
-      labelName: 'kubernetes_container_name',
-    }),
-    valueType: 'checkbox-select',
-  },
-];
+export const availableDevConsoleAttributes = (
+  tenant: string,
+  config: Config,
+  schema: Schema | undefined,
+): AttributeList => {
+  const { namespaceLabel, podLabel, containerLabel } = getAttributeLabels(config, schema);
 
+  return [
+    {
+      name: 'Content',
+      id: 'content',
+      valueType: 'text',
+    },
+    {
+      name: 'Namespaces',
+      label: namespaceLabel,
+      id: 'namespace',
+      options: projectsDataSource(),
+      valueType: 'checkbox-select',
+    },
+    {
+      name: 'Pods',
+      label: podLabel,
+      id: 'pod',
+      options: lokiLabelValuesDataSource({
+        config,
+        tenant,
+        labelName: podLabel,
+      }),
+      valueType: 'checkbox-select',
+    },
+    {
+      name: 'Containers',
+      label: containerLabel,
+      id: 'container',
+      options: lokiLabelValuesDataSource({
+        config,
+        tenant,
+        labelName: containerLabel,
+      }),
+      valueType: 'checkbox-select',
+    },
+  ];
+};
+
+// JZ USED in Logs Details Page
 export const availablePodAttributes = (
   namespace: string,
   podId: string,
@@ -563,13 +585,19 @@ export const getSeverityFilterPipelineStage = (
   return allFilters.length > 0 ? { operator: '|', value: allFilters.join(' or ') } : undefined;
 };
 
-const getPodAttributeOptions = (tenant: string, config: Config): (() => Promise<Option[]>) => {
+const getPodAttributeOptions = (
+  tenant: string,
+  config: Config,
+  schema: Schema | undefined,
+): (() => Promise<Option[]>) => {
+  const { podLabel } = getAttributeLabels(config, schema);
+
   return () =>
     Promise.allSettled<Promise<Option[]>>([
       lokiLabelValuesDataSource({
         config,
         tenant,
-        labelName: 'kubernetes_pod_name',
+        labelName: podLabel,
       })(),
       resourceDataSource({ resource: 'pods' })(),
     ])

@@ -77,7 +77,7 @@ const LogsPage: React.FC = () => {
     interval,
     direction,
     setDirectionInURL,
-  } = useURLState({ attributes: initialAvailableAttributes });
+  } = useURLState({ attributes: initialAvailableAttributes(config?.schema) });
 
   const handleToggleStreaming = () => {
     toggleStreaming({ query });
@@ -115,7 +115,7 @@ const LogsPage: React.FC = () => {
 
     const updatedFilters = filtersFromQuery({
       query: queryFromInput,
-      attributes: initialAvailableAttributes,
+      attributes: initialAvailableAttributes(schema),
       schema: schema,
     });
 
@@ -133,7 +133,7 @@ const LogsPage: React.FC = () => {
       const updatedQuery = queryFromFilters({
         existingQuery: query,
         filters: selectedFilters,
-        attributes: initialAvailableAttributes,
+        attributes: initialAvailableAttributes(schema),
         tenant: selectedTenant,
         schema: schema,
       });

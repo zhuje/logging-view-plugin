@@ -44,23 +44,6 @@ const LogsDevPage: React.FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => 
   let tenant = getInitialTenantFromNamespace(namespace);
 
   const {
-    query,
-    setQueryInURL,
-    schema,
-    areResourcesShown,
-    setShowResourcesInURL,
-    areStatsShown,
-    setShowStatsInURL,
-    filters,
-    setFilters,
-    setTimeRangeInURL,
-    timeRange,
-    interval,
-    direction,
-    setDirectionInURL,
-  } = useURLState({ attributes: initialAvailableAttributes, defaultTenant: tenant });
-
-  const {
     histogramData,
     histogramError,
     isLoadingLogsData,
@@ -81,6 +64,26 @@ const LogsDevPage: React.FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => 
     toggleStreaming,
     config,
   } = useLogs();
+
+  const {
+    query,
+    setQueryInURL,
+    schema,
+    areResourcesShown,
+    setShowResourcesInURL,
+    areStatsShown,
+    setShowStatsInURL,
+    filters,
+    setFilters,
+    setTimeRangeInURL,
+    timeRange,
+    interval,
+    direction,
+    setDirectionInURL,
+  } = useURLState({
+    attributes: initialAvailableAttributes(config?.schema),
+    defaultTenant: tenant,
+  });
 
   const handleToggleStreaming = () => {
     toggleStreaming({ query });
@@ -123,7 +126,7 @@ const LogsDevPage: React.FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => 
 
     const updatedFilters = filtersFromQuery({
       query: queryFromInput,
-      attributes: initialAvailableAttributes,
+      attributes: initialAvailableAttributes(schema),
       schema: schema,
     });
 
@@ -141,7 +144,7 @@ const LogsDevPage: React.FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => 
       const updatedQuery = queryFromFilters({
         existingQuery: defaultQueryFromTenant(selectedTenant),
         filters: { namespace: new Set(namespace ? [namespace] : []) },
-        attributes: initialAvailableAttributes,
+        attributes: initialAvailableAttributes(schema),
         tenant: selectedTenant,
       });
 
@@ -152,7 +155,7 @@ const LogsDevPage: React.FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => 
       const updatedQuery = queryFromFilters({
         existingQuery: query,
         filters: selectedFilters,
-        attributes: initialAvailableAttributes,
+        attributes: initialAvailableAttributes(schema),
         tenant: selectedTenant,
       });
 
@@ -165,7 +168,7 @@ const LogsDevPage: React.FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => 
   const attributeList = React.useMemo(
     () =>
       namespace
-        ? availableDevConsoleAttributes(getInitialTenantFromNamespace(namespace), config)
+        ? availableDevConsoleAttributes(getInitialTenantFromNamespace(namespace), config, schema)
         : [],
     [namespace, config],
   );
