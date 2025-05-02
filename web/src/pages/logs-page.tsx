@@ -59,6 +59,7 @@ const LogsPage: React.FC = () => {
     config,
   } = useLogs();
 
+  const [initSchema, setInitSchema] = React.useState(config?.schema);
   const {
     query,
     setQueryInURL,
@@ -77,7 +78,7 @@ const LogsPage: React.FC = () => {
     interval,
     direction,
     setDirectionInURL,
-  } = useURLState({ attributes: initialAvailableAttributes(config?.schema) });
+  } = useURLState({ attributes: initialAvailableAttributes(initSchema) });
 
   const handleToggleStreaming = () => {
     toggleStreaming({ query });
@@ -159,6 +160,7 @@ const LogsPage: React.FC = () => {
     runQuery({ queryToUse });
   }, [timeRange, isHistogramVisible, direction, tenant]);
 
+  // JZ Change Schema in URL and intiSchema
   React.useEffect(() => {
     let model: Schema | undefined;
     const configSchema = config?.schema;
@@ -171,6 +173,7 @@ const LogsPage: React.FC = () => {
 
     const queryToUse = defaultQueryFromTenant(DEFAULT_TENANT, model);
 
+    setInitSchema(model);
     setSchemaInURL(model);
     setQueryInURL(queryToUse);
 
