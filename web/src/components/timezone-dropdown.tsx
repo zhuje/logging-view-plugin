@@ -286,9 +286,7 @@ export const TimezoneDropdown: React.FC<TimezoneDropdownProps> = ({
         />
 
         <TextInputGroupUtilities {...(!inputValue ? { style: { display: 'none' } } : {})}>
-          <Button variant="plain" onClick={onClearButtonClick} aria-label={t('Clear input value')}>
-            <TimesIcon aria-hidden />
-          </Button>
+          <Button icon={<TimesIcon aria-hidden />} variant="plain" onClick={onClearButtonClick} aria-label={t('Clear input value')} />
         </TextInputGroupUtilities>
       </TextInputGroup>
     </MenuToggle>

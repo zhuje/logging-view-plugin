@@ -15,15 +15,7 @@ export const TogglePlay: React.FC<TogglePlayProps> = ({ onClick, active, isDisab
   const { t } = useTranslation('plugin__logging-view-plugin');
 
   return (
-    <Button
-      variant="plain"
-      className={`lv-plugin__toggle-play ${active ? 'lv-plugin__toggle-play--active' : ''}`}
-      onClick={onClick}
-      aria-label={active ? t('Pause streaming') : t('Start streaming')}
-      isDisabled={isDisabled}
-      data-test={TestIds.ToogleStreamingButton}
-    >
-      {active ? (
+    <Button icon={active ? (
         <Icon size="sm">
           <PauseIcon />
         </Icon>
@@ -32,6 +24,12 @@ export const TogglePlay: React.FC<TogglePlayProps> = ({ onClick, active, isDisab
           <PlayIcon />
         </Icon>
       )}
-    </Button>
+      variant="plain"
+      className={`lv-plugin__toggle-play ${active ? 'lv-plugin__toggle-play--active' : ''}`}
+      onClick={onClick}
+      aria-label={active ? t('Pause streaming') : t('Start streaming')}
+      isDisabled={isDisabled}
+      data-test={TestIds.ToogleStreamingButton}
+     />
   );
 };

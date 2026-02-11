@@ -190,7 +190,7 @@ const LogsDetailPage: React.FC<LogsDetailPageProps> = ({
   }, [resultIsMetric]);
 
   return (
-    <PageSection>
+    <PageSection hasBodyWrapper={false}>
       <Grid hasGutter>
         <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
           <Title headingLevel="h1" size="lg">
@@ -218,13 +218,13 @@ const LogsDetailPage: React.FC<LogsDetailPageProps> = ({
             )}
             <RefreshIntervalDropdown onRefresh={runQuery} isDisabled={isQueryEmpty} />
             <Tooltip content={<div>Refresh</div>}>
-              <Button
+              <Button icon={<SyncAltIcon />}
                 onClick={runQuery}
                 aria-label="Refresh"
                 variant="secondary"
                 data-test={TestIds.SyncButton}
               >
-                <SyncAltIcon />
+                
               </Button>
             </Tooltip>
           </Flex>

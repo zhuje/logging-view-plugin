@@ -1,11 +1,4 @@
-import {
-  Alert,
-  CodeBlock,
-  CodeBlockCode,
-  Text,
-  TextContent,
-  TextVariants,
-} from '@patternfly/react-core';
+import { Alert, CodeBlock, CodeBlockCode, Content, ContentVariants } from '@patternfly/react-core';
 import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import { isFetchError } from '../cancellable-fetch';
@@ -39,7 +32,7 @@ const queryWithNamespaceCode = (schema: Schema) =>
   `{ ${getStreamLabelsFromSchema(schema)[ResourceLabel.Namespace]} = "<namespace>"}`;
 
 const Suggestion: React.FC = ({ children }) => (
-  <Text component={TextVariants.small}>{children}</Text>
+  <Content component={ContentVariants.small}>{children}</Content>
 );
 
 const ForbiddenWithNamespace: React.FC<{ t: TFunction }> = ({ t }) => (
@@ -200,13 +193,13 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
         title={capitalize(errorMessage)}
       />
 
-      {hasSuggestions ? (
-        <TextContent>
-          <Text component={TextVariants.p}>{title}</Text>
+      {suggestions && suggestions.length > 0 ? (
+        <Content>
+          <Content component={ContentVariants.p}>{title}</Content>
 
           {forbiddenSuggestion}
           {suggestions}
-        </TextContent>
+        </Content>
       ) : null}
     </>
   );
