@@ -218,7 +218,7 @@ const LogsDevPage: React.FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => 
   }, [resultIsMetric]);
 
   return (
-    <PageSection>
+    <PageSection hasBodyWrapper={false}>
       <Grid hasGutter>
         <Flex justifyContent={{ default: 'justifyContentFlexEnd' }}>
           <Flex>
@@ -243,14 +243,14 @@ const LogsDevPage: React.FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => 
             )}
             <RefreshIntervalDropdown onRefresh={runQuery} isDisabled={isRunQueryDisabled} />
             <Tooltip content={<div>Refresh</div>}>
-              <Button
+              <Button icon={<SyncAltIcon />}
                 onClick={handleRefreshClick}
                 aria-label="Refresh"
                 variant="secondary"
                 data-test={TestIds.SyncButton}
                 isDisabled={isRunQueryDisabled}
               >
-                <SyncAltIcon />
+                
               </Button>
             </Tooltip>
           </Flex>

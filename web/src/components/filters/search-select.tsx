@@ -332,9 +332,7 @@ export const SearchSelect: React.FC<SearchSelectProps> = ({
         />
         {inputValue.length > 0 && (
           <TextInputGroupUtilities>
-            <Button variant="plain" onClick={handleClear} aria-label="Clear input value">
-              <TimesIcon aria-hidden />
-            </Button>
+            <Button icon={<TimesIcon aria-hidden />} variant="plain" onClick={handleClear} aria-label="Clear input value" />
           </TextInputGroupUtilities>
         )}
       </TextInputGroup>
