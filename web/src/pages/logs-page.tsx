@@ -205,15 +205,14 @@ const LogsPage: React.FC = () => {
             )}
             <RefreshIntervalDropdown onRefresh={runQuery} isDisabled={isQueryEmpty} />
             <Tooltip content={<div>Refresh</div>}>
-              <Button icon={<SyncAltIcon />}
+              <Button
+                icon={<SyncAltIcon />}
                 onClick={handleRefreshClick}
                 aria-label="Refresh"
                 variant="secondary"
                 data-test={TestIds.SyncButton}
                 isDisabled={isQueryEmpty}
-              >
-                
-              </Button>
+              ></Button>
             </Tooltip>
           </Flex>
         </Flex>
