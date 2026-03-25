@@ -218,14 +218,13 @@ const LogsDetailPage: React.FC<LogsDetailPageProps> = ({
             )}
             <RefreshIntervalDropdown onRefresh={runQuery} isDisabled={isQueryEmpty} />
             <Tooltip content={<div>Refresh</div>}>
-              <Button icon={<SyncAltIcon />}
+              <Button
+                icon={<SyncAltIcon />}
                 onClick={runQuery}
                 aria-label="Refresh"
                 variant="secondary"
                 data-test={TestIds.SyncButton}
-              >
-                
-              </Button>
+              ></Button>
             </Tooltip>
           </Flex>
         </Flex>
