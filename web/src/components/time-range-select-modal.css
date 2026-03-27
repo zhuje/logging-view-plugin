@@ -1,10 +1,10 @@
 .lv-plugin__time-range-modal {
-  --pf-v5-global--FontSize--md: 14px;
+  --pf-t--global--font--size--md: 14px;
 }
 
 .lv-plugin__time-range-modal__footer {
   display: flex;
-  gap: var(--pf-v5-global--spacer--sm);
+  gap: var(--pf-t--global--spacer--sm);
   justify-content: flex-end;
   width: 100%;
 }
@@ -12,7 +12,7 @@
 .lv-plugin__time-range-modal__body {
   overflow: visible;
   display: grid;
-  gap: var(--pf-v5-global--spacer--md);
+  gap: var(--pf-t--global--spacer--md);
 }
 
 .lv-plugin__time-range-modal__field {
@@ -21,5 +21,5 @@
 }
 
 .lv-plugin__time-range-modal__error {
-  margin-top: var(--pf-v5-global--spacer--md);
+  margin-top: var(--pf-t--global--spacer--md);
 }
