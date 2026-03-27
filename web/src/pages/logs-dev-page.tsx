@@ -243,15 +243,14 @@ const LogsDevPage: React.FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => 
             )}
             <RefreshIntervalDropdown onRefresh={runQuery} isDisabled={isRunQueryDisabled} />
             <Tooltip content={<div>Refresh</div>}>
-              <Button icon={<SyncAltIcon />}
+              <Button
+                icon={<SyncAltIcon />}
                 onClick={handleRefreshClick}
                 aria-label="Refresh"
                 variant="secondary"
                 data-test={TestIds.SyncButton}
                 isDisabled={isRunQueryDisabled}
-              >
-                
-              </Button>
+              ></Button>
             </Tooltip>
           </Flex>
         </Flex>

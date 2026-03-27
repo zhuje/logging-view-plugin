@@ -1,10 +1,4 @@
-import {
-  Alert,
-  CodeBlock,
-  CodeBlockCode,
-  Content,
-  ContentVariants,
-} from '@patternfly/react-core';
+import { Alert, CodeBlock, CodeBlockCode, Content, ContentVariants } from '@patternfly/react-core';
 import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import { isFetchError } from '../cancellable-fetch';
