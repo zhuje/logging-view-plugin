@@ -1,6 +1,6 @@
 .lv-plugin__error_message {
-  margin-bottom: var(--pf-v5-global--spacer--md);
-  margin-top: var(--pf-v5-global--spacer--md);
+  margin-bottom: var(--pf-t--global--spacer--md);
+  margin-top: var(--pf-t--global--spacer--md);
   background-color: transparent;
 }
 

@@ -1,6 +1,6 @@
 .lv-plugin__toggle-play.pf-v6-c-button {
-  background-color: var(--pf-v5-global--BackgroundColor--100);
-  border: var(--pf-v5-global--BorderWidth--lg) solid var(--pf-v5-global--BorderColor--100);
+  background-color: var(--pf-t--temp--dev--tbd /* CODEMODS: original v5 color was:--pf-v5-global--BackgroundColor--100 */);
+  border: var(--pf-t--global--border--width--extra-strong) solid var(--pf-t--temp--dev--tbd /* CODEMODS: original v5 color was:--pf-v5-global--BorderColor--100 */);
   border-radius: 50%;
   height: 32px;
   padding: 0;
@@ -9,5 +9,5 @@
 }
 
 .lv-plugin__toggle-play.pf-v6-c-button.lv-plugin__toggle-play--active {
-  border-color: var(--pf-v5-global--palette--green-300);
+  border-color: var(--pf-t--temp--dev--tbd /* CODEMODS: original v5 color was:--pf-v5-global--palette--green-300 */);
 }
