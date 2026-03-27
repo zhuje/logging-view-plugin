@@ -193,7 +193,7 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
         title={capitalize(errorMessage)}
       />
 
-      {suggestions && suggestions.length > 0 ? (
+      {hasSuggestions ? (
         <Content>
           <Content component={ContentVariants.p}>{title}</Content>
 
