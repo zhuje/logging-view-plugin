@@ -62,7 +62,7 @@ export const millisecondsFromDuration = (duration: string): number => {
       }
       return sum;
     }, 0);
-  } catch (ignored) {
+  } catch {
     // Invalid duration format
     return 0;
   }

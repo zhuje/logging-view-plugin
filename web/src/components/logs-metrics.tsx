@@ -1,12 +1,12 @@
 import {
-	Chart,
-	ChartAxis,
-	ChartGroup,
-	ChartLegendTooltip,
-	ChartLine,
-	ChartThemeColor,
-	createContainer,
-	getThemeColors
+  Chart,
+  ChartAxis,
+  ChartGroup,
+  ChartLegendTooltip,
+  ChartLine,
+  ChartThemeColor,
+  createContainer,
+  getThemeColors,
 } from '@patternfly/react-charts/victory';
 import { Alert } from '@patternfly/react-core';
 import { InnerScrollContainer, Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';

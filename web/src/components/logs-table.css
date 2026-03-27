@@ -98,12 +98,12 @@
   text-align: center;
 }
 
-.lv-plugin__table__row-info .pf-v5-c-alert {
+.lv-plugin__table__row-info .pf-v6-c-alert {
   text-align: center;
   --pf-v5-c-alert__icon--FontSize: 0.9rem;
 }
 
-.lv-plugin__table__row-info .pf-v5-c-alert__title {
+.lv-plugin__table__row-info .pf-v6-c-alert__title {
   font-size: 0.8rem;
 }
 
@@ -125,6 +125,6 @@
   vertical-align: middle;
 }
 
-.pf-v5-c-table .lv-plugin__table__row.lv-plugin__table__row--expanded {
+.pf-v6-c-table .lv-plugin__table__row.lv-plugin__table__row--expanded {
   border-bottom: none;
 }
