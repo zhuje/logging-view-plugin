@@ -35,7 +35,7 @@ export function getPFVersion() {
   const style = getComputedStyle(document.documentElement);
   if (style.getPropertyValue('--pf-v6-global--FontSize--md')) {
     return 'v6';
-  } else if (style.getPropertyValue('--pf-v5-global--FontSize--md')) {
+  } else if (style.getPropertyValue("--pf-t--global--font--size--md")) {
     return 'v5';
   }
   // Default to current version

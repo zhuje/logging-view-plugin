@@ -8,8 +8,8 @@ import {
   SelectList,
   SelectOption,
   Toolbar,
-  ToolbarChip,
-  ToolbarChipGroup,
+  ToolbarLabel,
+  ToolbarLabelGroup,
   ToolbarContent,
   ToolbarFilter,
   ToolbarGroup,
@@ -131,8 +131,8 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
     : new Set();
 
   const onDeleteSeverityFilter = (
-    _category: string | ToolbarChipGroup,
-    chip: string | ToolbarChip,
+    _category: string | ToolbarLabelGroup,
+    chip: string | ToolbarLabel,
   ) => {
     severityFilter.delete(chip.toString() as Severity);
     const newFilters = { ...(filters ?? {}), severity: severityFilter };
@@ -202,9 +202,9 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
 
         <ToolbarGroup>
           <ToolbarFilter
-            chips={severityFilterArray}
-            deleteChip={onDeleteSeverityFilter}
-            deleteChipGroup={onDeleteSeverityGroup}
+            labels={severityFilterArray}
+            deleteLabel={onDeleteSeverityFilter}
+            deleteLabelGroup={onDeleteSeverityGroup}
             categoryName="Severity"
             className="lv-plugin__severity-filter"
             data-test={TestIds.SeverityDropdown}

@@ -7,7 +7,7 @@ import {
   ChartThemeColor,
   createContainer,
   getThemeColors,
-} from '@patternfly/react-charts';
+} from '@patternfly/react-charts/victory';
 import { Alert } from '@patternfly/react-core';
 import { InnerScrollContainer, Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import React from 'react';
