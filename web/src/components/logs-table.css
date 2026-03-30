@@ -26,7 +26,7 @@
 }
 
 .lv-plugin__table .lv-plugin__table__time-header {
-  font-size: var(--pf-t--global--font--size--md);
+  font-size: var(--pf-t--global--font--size--sm);
 }
 
 .lv-plugin__table .lv-plugin__table__message {
@@ -89,7 +89,7 @@
 
 .lv-plugin__table__row-info {
   font-size: var(--pf-t--global--font--size--xs);
-  background-color: var(--pf-v6-global--Background-color--100);
+  background-color: var(--pf-t--global--background--color--100);
   --pf-v6-c-table--cell--PaddingBlockEnd: var(--pf-t--global--spacer--xs);
   --pf-v6-c-table--cell--PaddingBlockStart: var(--pf-t--global--spacer--xs);
 }

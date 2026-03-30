@@ -21,6 +21,14 @@ import {
   DropdownList,
   MenuToggle,
   MenuToggleElement,
+  Page,
+  PageSidebar,
+  PageSection,
+  Nav,
+  NavItem,
+  NavList,
+  Masthead,
+  MastheadMain,
 } from '@patternfly/react-core';
 import { TestIds } from './test-ids';
 
@@ -90,42 +98,36 @@ const DevConsole = () => {
 
 const EndToEndTestsApp = () => {
   return (
-    <div className="pf-v6-c-page lv-plugin__standalone__page">
-      <BrowserRouter>
-        <header className="pf-v6-c-masthead">
-          <div className="pf-v6-c-masthead__main"></div>
-        </header>
-
-        <div className="pf-v6-c-page__sidebar lv-plugin__standalone__side-menu">
-          <div className="pf-v6-c-page__sidebar-body">
-            <nav className="pf-v6-c-nav" aria-label="Global">
-              <ul className="pf-v6-c-nav__list">
-                <li className="pf-v6-c-nav__item">
-                  <Link className="pf-v6-c-nav__link" to="/k8s/ns/default/pods/test-pod-name">
-                    Pods Logs
-                  </Link>
-                </li>
-                <li className="pf-v6-c-nav__item">
-                  <Link className="pf-v6-c-nav__link" to="/dev-monitoring/ns/my-namespace/logs">
-                    Dev Logs
-                  </Link>
-                </li>
-                <li className="pf-v6-c-nav__item">
-                  <Link className="pf-v6-c-nav__link" to="/monitoring/logs">
-                    Logs
-                  </Link>
-                </li>
-                <li className="pf-v6-c-nav__item">
-                  <Link className="pf-v6-c-nav__link" to="/monitoring/alerts/test-alert">
-                    Alerts
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </div>
-
-        <main className="pf-v6-c-page__main" tabIndex={-1}>
+    <BrowserRouter>
+      <Page
+        className="lv-plugin__standalone__page"
+        masthead={
+          <Masthead>
+            <MastheadMain />
+          </Masthead>
+        }
+        sidebar={
+          <PageSidebar className="lv-plugin__standalone__side-menu">
+            <Nav aria-label="Global">
+              <NavList>
+                <NavItem>
+                  <Link to="/k8s/ns/default/pods/test-pod-name">Pods Logs</Link>
+                </NavItem>
+                <NavItem>
+                  <Link to="/dev-monitoring/ns/my-namespace/logs">Dev Logs</Link>
+                </NavItem>
+                <NavItem>
+                  <Link to="/monitoring/logs">Logs</Link>
+                </NavItem>
+                <NavItem>
+                  <Link to="/monitoring/alerts/test-alert">Alerts</Link>
+                </NavItem>
+              </NavList>
+            </Nav>
+          </PageSidebar>
+        }
+      >
+        <PageSection>
           <Routes>
             <Route path="/monitoring/logs" element={<LogsPage />} />
             <Route path="/dev-monitoring/ns/:ns/logs" element={<DevConsole />} />
@@ -142,9 +144,9 @@ const EndToEndTestsApp = () => {
               }
             />
           </Routes>
-        </main>
-      </BrowserRouter>
-    </div>
+        </PageSection>
+      </Page>
+    </BrowserRouter>
   );
 };
 

@@ -187,7 +187,7 @@ VirtualizedTableBodyProps<LogTableData, any>) => {
   return (
     <VirtualTableBody
       autoHeight
-      className="pf-v6-c-table pf-v5-m-compact pf-v5-m-border-rows pf-v6-c-virtualized pf-v6-c-window-scroller"
+      className="pf-v6-c-table pf-m-compact pf-m-border-rows pf-v6-c-virtualized pf-v6-c-window-scroller"
       deferredMeasurementCache={cellMeasurementCache}
       rowHeight={cellMeasurementCache.rowHeight}
       height={height || 0}
