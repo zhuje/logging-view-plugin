@@ -1,6 +1,6 @@
-.lv-plugin__toggle-play.pf-v6-c-button {
-  background-color: var(--pf-t--temp--dev--tbd /* CODEMODS: original v5 color was:--pf-v5-global--BackgroundColor--100 */);
-  border: var(--pf-t--global--border--width--extra-strong) solid var(--pf-t--temp--dev--tbd /* CODEMODS: original v5 color was:--pf-v5-global--BorderColor--100 */);
+.lv-plugin__toggle-play {
+  background-color: var(--pf-t--global--background--color--secondary--default);
+  border: var(--pf-t--global--border--width--extra-strong) solid var(--pf-t--global--border--color--default);
   border-radius: 50%;
   height: 32px;
   padding: 0;
@@ -8,6 +8,6 @@
   cursor: pointer;
 }
 
-.lv-plugin__toggle-play.pf-v6-c-button.lv-plugin__toggle-play--active {
+.lv-plugin__toggle-play--active {
   border-color: var(--pf-t--global--border--color--status--success--default);
 }

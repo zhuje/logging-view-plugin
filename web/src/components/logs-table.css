@@ -26,7 +26,7 @@
 }
 
 .lv-plugin__table .lv-plugin__table__time-header {
-  font-size: var(--pf-t--global--font--size--md);
+  font-size: var(--pf-t--global--font--size--sm);
 }
 
 .lv-plugin__table .lv-plugin__table__message {
