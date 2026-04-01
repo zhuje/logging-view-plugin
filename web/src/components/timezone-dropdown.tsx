@@ -301,7 +301,9 @@ export const TimezoneDropdown: React.FC<TimezoneDropdownProps> = ({
       selected={selected}
       onSelect={onSelect}
       onOpenChange={(isOpenValue) => {
-        !isOpenValue && closeMenu();
+        if (!isOpenValue) {
+          closeMenu();
+        }
       }}
       toggle={toggle}
       shouldFocusFirstItemOnOpen={false}
