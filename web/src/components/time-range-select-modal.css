@@ -1,5 +1,10 @@
 .lv-plugin__time-range-modal {
   --pf-t--global--font--size--md: 14px;
+  min-height: 450px !important;
+  max-height: 550px !important;
+  height: auto !important;
+  width: 700px !important;
+  max-width: 90vw !important;
 }
 
 .lv-plugin__time-range-modal__footer {
@@ -11,13 +16,39 @@
 
 .lv-plugin__time-range-modal__body {
   overflow: visible;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: var(--pf-t--global--spacer--md);
+  padding: var(--pf-t--global--spacer--xl);
+  padding-top: calc(var(--pf-t--global--spacer--xl) + var(--pf-t--global--spacer--xl));
+  align-items: stretch;
+  justify-content: flex-start;
+  flex-grow: 1;
 }
 
 .lv-plugin__time-range-modal__field {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--md);
+  width: 100%;
+}
+
+.lv-plugin__time-range-modal__field > .pf-c-form-control,
+.lv-plugin__time-range-modal__field > .pf-c-input-group {
+  flex: 1;
+}
+
+.lv-plugin__time-range-modal__body > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--xs);
+}
+
+.lv-plugin__time-range-modal__body label {
+  font-weight: var(--pf-t--global--font--weight--semi-bold);
+  color: var(--pf-t--global--text--color--regular);
+  margin-bottom: var(--pf-t--global--spacer--xs);
+  font-size: var(--pf-t--global--font--size--sm);
 }
 
 .lv-plugin__time-range-modal__error {
