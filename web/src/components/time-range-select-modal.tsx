@@ -142,35 +142,17 @@ export const TimeRangeSelectModal: React.FC<TimeRangeSelectModalProps> = ({
     <Modal
       id="date-time-picker-modal"
       className="modal-dialog lv-plugin__time-range-modal"
-      variant={ModalVariant.large}
+      variant={ModalVariant.small}
+      width="auto"
       title="Custom time range"
       position="top"
       isOpen
       onEscapePress={onClose}
       onClose={onClose}
-      // showClose={false}
-      // hasNoBodyWrapper={true}
       aria-label="date-time-picker-modal"
       data-test={TestIds.TimeRangeSelectModal}
-      // footer={
-      //   <div className="lv-plugin__time-range-modal__footer">
-      //     <Button
-      //       key="confirm"
-      //       variant="primary"
-      //       onClick={handleSelectRange}
-      //       isDisabled={!isRangeSelected || !isRangeValid}
-      //       data-test={TestIds.TimeRangeDropdownSaveButton}
-      //     >
-      //       {t('Save')}
-      //     </Button>
-      //     <Button key="cancel" variant="secondary" onClick={onClose}>
-      //       {t('Cancel')}
-      //     </Button>
-      //   </div>
-      // }
     >
-      <ModalHeader title="Custom time range!" labelId="scrollable-modal-title" />
-
+      <ModalHeader title="Custom time range" labelId="scrollable-modal-title" />
       <ModalBody
         className="lv-plugin__time-range-modal__body"
         data-test={TestIds.TimeRangeSelectModal}
