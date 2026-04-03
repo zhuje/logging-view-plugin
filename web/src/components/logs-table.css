@@ -40,7 +40,6 @@
 }
 
 .lv-plugin__table .lv-plugin__table__resources {
-  --pf-v6-c-table--cell--FontSize: var(--pf-t--global--font--size--md);
   margin-top: var(--pf-t--global--spacer--xs);
 }
 
