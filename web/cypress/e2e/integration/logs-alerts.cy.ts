@@ -15,9 +15,9 @@ describe('Alerts logs metrics', () => {
 
     cy.visit(LOGS_ALERTS_PAGE_URL);
 
-    cy.getByTestId(TestIds.TimeRangeDropdown).should('exist');
+    cy.byTestID(TestIds.TimeRangeDropdown).should('exist');
 
-    cy.getByTestId(TestIds.LogsMetrics)
+    cy.byTestID(TestIds.LogsMetrics)
       .should('exist')
       .within(() => {
         cy.get('svg g > path').should('have.length.above', 0);
@@ -31,7 +31,7 @@ describe('Alerts logs metrics', () => {
 
     cy.visit(LOGS_ALERTS_PAGE_URL);
 
-    cy.getByTestId(TestIds.LogsMetrics)
+    cy.byTestID(TestIds.LogsMetrics)
       .should('exist')
       .within(() => {
         cy.contains('Internal Server Error');
@@ -43,7 +43,7 @@ describe('Alerts logs metrics', () => {
 
     cy.visit(LOGS_ALERTS_PAGE_URL);
 
-    cy.getByTestId(TestIds.LogsMetrics)
+    cy.byTestID(TestIds.LogsMetrics)
       .should('exist')
       .within(() => {
         cy.contains('Unexpected end of JSON input');
@@ -55,7 +55,7 @@ describe('Alerts logs metrics', () => {
 
     cy.visit(LOGS_ALERTS_PAGE_URL);
 
-    cy.getByTestId(TestIds.LogsMetrics)
+    cy.byTestID(TestIds.LogsMetrics)
       .should('exist')
       .within(() => {
         cy.contains('No datapoints found');

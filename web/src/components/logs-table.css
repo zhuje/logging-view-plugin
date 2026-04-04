@@ -3,17 +3,11 @@
   --pf-v6-c-table--cell--Width: 50px;
   --pf-v6-c-table--cell--MaxWidth: 50px;
   --pf-v6-c-table--cell--MinWidth: 0px;
-  font-size: var(--pf-t--global--font--size--sm);
-  --pf-v6-c-table--cell--Width: 50px;
-  --pf-v6-c-table--cell--MaxWidth: 50px;
-  --pf-v6-c-table--cell--MinWidth: 0px;
   padding: 0;
   vertical-align: middle;
 }
 
 .lv-plugin__table .lv-plugin__table__details {
-  font-size: var(--pf-t--global--font--size--sm);
-  padding: var(--pf-t--global--spacer--lg);
   font-size: var(--pf-t--global--font--size--sm);
   padding: var(--pf-t--global--spacer--lg);
   display: block;
@@ -24,13 +18,6 @@
   --pf-v6-c-table--cell--MaxWidth: 270px;
   --pf-v6-c-table--cell--MinWidth: 270px;
   --pf-v6-c-table--cell--WhiteSpace: nowrap;
-  --pf-v6-c-table--cell--Width: 270px;
-  --pf-v6-c-table--cell--MaxWidth: 270px;
-  --pf-v6-c-table--cell--MinWidth: 270px;
-  --pf-v6-c-table--cell--WhiteSpace: nowrap;
-
-  font-size: var(--pf-t--global--font--size--sm);
-  padding: var(--pf-t--global--spacer--xs);
   font-size: var(--pf-t--global--font--size--sm);
   padding: var(--pf-t--global--spacer--xs);
   font-family: monospace;
@@ -42,9 +29,6 @@
 }
 
 .lv-plugin__table .lv-plugin__table__message {
-  font-size: var(--pf-t--global--font--size--sm);
-  padding: var(--pf-t--global--spacer--xs);
-  padding-right: var(--pf-t--global--spacer--md);
   font-size: var(--pf-t--global--font--size--sm);
   padding: var(--pf-t--global--spacer--xs);
   padding-right: var(--pf-t--global--spacer--md);
@@ -136,8 +120,6 @@
 }
 
 .lv-plugin__table__row-header {
-  padding: var(--pf-t--global--spacer--xs);
-  font-size: var(--pf-t--global--font--size--md);
   padding: var(--pf-t--global--spacer--xs);
   font-size: var(--pf-t--global--font--size--md);
   vertical-align: middle;

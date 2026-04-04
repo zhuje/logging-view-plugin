@@ -666,34 +666,22 @@ describe('Logs Page', () => {
     cy.wait('@resourceQuery'); // Wait for the resource API call to complete
     cy.wait(2000); // Give extra time for data processing and DOM updates
 
-    // Debug: Log what's actually in the DOM
-    cy.get('body').then(($body) => {
-      cy.log('Body HTML:', $body.html());
-      cy.log('Looking for dropdown elements...');
-    });
+    // Wait for dropdown to populate and try to find container options
+    cy.get('body').should('contain', 'my-pod-2 / operator');
 
-    // Try multiple approaches to find dropdown options
+    // Select dropdown option - try PatternFly v6 selector first, fallback if needed
     cy.get('body').then(($body) => {
       if ($body.find('[role="option"]').length > 0) {
-        cy.log('Found role="option" elements');
         cy.get('[role="option"]')
           .contains(/^my-pod-2 \/ operator$/)
           .click({ force: true });
-      } else if ($body.find('.pf-c-select__menu-item').length > 0) {
-        cy.log('Found .pf-c-select__menu-item elements');
-        cy.get('.pf-c-select__menu-item')
-          .contains(/^my-pod-2 \/ operator$/)
-          .click({ force: true });
-      } else if ($body.find('[data-value]').length > 0) {
-        cy.log('Found data-value elements');
-        cy.get('[data-value*="my-pod-2"]').click({ force: true });
       } else {
-        cy.log('Falling back to simple contains');
+        // Fallback to any clickable element containing the text
         cy.contains(/^my-pod-2 \/ operator$/).click({ force: true });
       }
     });
 
-    // Verify checkbox states using fallback approach
+    // Verify checkbox states if options are available
     cy.get('body').then(($body) => {
       if ($body.find('[role="option"]').length > 0) {
         cy.get('[role="option"]')
@@ -709,8 +697,8 @@ describe('Logs Page', () => {
           .find('input')
           .should('be.checked');
       } else {
-        // Skip checkbox verification if we can't find proper option elements
-        cy.log('Could not find role="option" elements for checkbox verification');
+        // If no role="option" elements, skip checkbox verification
+        cy.log('No [role="option"] elements found, skipping checkbox verification');
       }
     });
 
