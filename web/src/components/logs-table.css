@@ -127,3 +127,7 @@
 .pf-v6-c-table .lv-plugin__table__row.lv-plugin__table__row--expanded {
   border-bottom: none;
 }
+
+.pf-v6-c-table__tbody.ReactVirtualized__VirtualGrid__innerScrollContainer {
+  pointer-events: auto !important;
+}
