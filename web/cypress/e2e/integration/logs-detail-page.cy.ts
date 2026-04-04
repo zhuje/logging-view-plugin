@@ -25,13 +25,13 @@ describe('Logs Detail Page', () => {
 
     cy.wait('@queryRangeStreams');
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
       });
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).click();
+    cy.byTestID(TestIds.ExecuteQueryButton).click();
 
     cy.get('@queryRangeStreams.all').should('have.length.at.least', 1);
   });
@@ -46,15 +46,15 @@ describe('Logs Detail Page', () => {
 
     cy.wait('@queryRangeStreams');
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
       });
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.ShowQueryToggle).click();
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea')
         .type('{selectAll}')
         .type('{ job = "some_job" }', {
@@ -77,17 +77,14 @@ describe('Logs Detail Page', () => {
 
     cy.wait('@queryRangeStreams');
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
       });
 
-    cy.getByTestId(TestIds.SeverityDropdown)
-      .click()
-      .within(() => {
-        cy.contains('warning').click();
-      });
+    cy.byTestID(TestIds.SeverityDropdown).click();
+    cy.contains('warning').click();
 
     cy.get('@queryRangeStreams.all').should('have.length.at.least', 1);
   });
@@ -100,17 +97,17 @@ describe('Logs Detail Page', () => {
 
     cy.visit(LOGS_DETAIL_PAGE_URL);
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.ShowQueryToggle).click();
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea').clear();
     });
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).should('be.disabled');
+    cy.byTestID(TestIds.ExecuteQueryButton).should('be.disabled');
 
-    cy.getByTestId(TestIds.ToogleStreamingButton).should('be.disabled');
+    cy.byTestID(TestIds.ToogleStreamingButton).should('be.disabled');
 
-    cy.getByTestId(TestIds.SeverityDropdown).within(() => {
+    cy.byTestID(TestIds.SeverityDropdown).within(() => {
       cy.get('button').should('be.disabled');
     });
   });
@@ -125,7 +122,7 @@ describe('Logs Detail Page', () => {
 
     cy.wait('@queryRangeStreams');
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
@@ -144,7 +141,7 @@ describe('Logs Detail Page', () => {
 
     cy.get('@queryRangeStreamsInfrastructure.all').should('have.length.at.least', 1);
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
@@ -156,7 +153,7 @@ describe('Logs Detail Page', () => {
 
     cy.visit(LOGS_DETAIL_PAGE_URL);
 
-    cy.getByTestId(TestIds.LogsMetrics).should('exist');
+    cy.byTestID(TestIds.LogsMetrics).should('exist');
   });
 
   it('histogram is disabled and not visible when query results are matrix type', () => {
@@ -164,9 +161,9 @@ describe('Logs Detail Page', () => {
 
     cy.visit(LOGS_DETAIL_PAGE_URL);
 
-    cy.getByTestId(TestIds.LogsMetrics).should('exist');
-    cy.getByTestId(TestIds.ToggleHistogramButton).should('be.disabled');
-    cy.getByTestId(TestIds.LogsHistogram).should('not.exist');
+    cy.byTestID(TestIds.LogsMetrics).should('exist');
+    cy.byTestID(TestIds.ToggleHistogramButton).should('be.disabled');
+    cy.byTestID(TestIds.LogsHistogram).should('not.exist');
   });
 
   it('histogram is disabled after beign enabled by a streams result when query results are matrix type', () => {
@@ -178,17 +175,17 @@ describe('Logs Detail Page', () => {
 
     cy.visit(LOGS_DETAIL_PAGE_URL);
 
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
 
-    cy.getByTestId(TestIds.LogsHistogram)
+    cy.byTestID(TestIds.LogsHistogram)
       .should('exist')
       .within(() => {
         cy.get('svg g > path').should('have.length.above', 0);
       });
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.ShowQueryToggle).click();
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea')
         .type('{selectAll}')
         .type('{backspace}')
@@ -200,13 +197,13 @@ describe('Logs Detail Page', () => {
         );
     });
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).click();
+    cy.byTestID(TestIds.ExecuteQueryButton).click();
 
-    cy.getByTestId(TestIds.LogsMetrics).should('exist');
-    cy.getByTestId(TestIds.ToggleHistogramButton).should('be.disabled');
-    cy.getByTestId(TestIds.LogsHistogram).should('not.exist');
+    cy.byTestID(TestIds.LogsMetrics).should('exist');
+    cy.byTestID(TestIds.ToggleHistogramButton).should('be.disabled');
+    cy.byTestID(TestIds.LogsHistogram).should('not.exist');
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea')
         .type('{selectAll}')
         .type('{backspace}')
@@ -215,11 +212,11 @@ describe('Logs Detail Page', () => {
         });
     });
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).click();
-    cy.getByTestId(TestIds.LogsMetrics).should('not.exist');
-    cy.getByTestId(TestIds.ToggleHistogramButton).should('be.enabled');
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
-    cy.getByTestId(TestIds.LogsHistogram)
+    cy.byTestID(TestIds.ExecuteQueryButton).click();
+    cy.byTestID(TestIds.LogsMetrics).should('not.exist');
+    cy.byTestID(TestIds.ToggleHistogramButton).should('be.enabled');
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.LogsHistogram)
       .should('exist')
       .within(() => {
         cy.get('svg g > path').should('have.length.above', 0);

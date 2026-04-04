@@ -69,10 +69,10 @@ describe('Alerts logs metrics', () => {
 
     cy.visit(LOGS_ALERTS_PAGE_URL);
 
-    cy.getByTestId(TestIds.TimeRangeDropdown).within(() => {
-      cy.contains('Last 1 hour').click();
-      cy.contains('Last 6 hours').click();
+    cy.byTestID(TestIds.TimeRangeDropdown).within(() => {
+      cy.get('button').click(); // Open the dropdown
     });
+    cy.contains('Last 6 hours').click(); // Select from opened dropdown
 
     cy.wait(200);
 

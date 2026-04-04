@@ -238,7 +238,11 @@ export const LogsToolbar: React.FC<LogsToolbarProps> = ({
 
         {enableTenantDropdown && (
           <ToolbarGroup>
-            <TenantDropdown onTenantSelected={onTenantSelect} selectedTenant={tenant} />
+            <TenantDropdown
+              onTenantSelected={onTenantSelect}
+              selectedTenant={tenant}
+              isDisabled={isDisabled}
+            />
           </ToolbarGroup>
         )}
 

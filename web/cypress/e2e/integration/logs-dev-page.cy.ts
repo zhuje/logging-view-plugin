@@ -28,23 +28,23 @@ describe('Logs Dev Page', () => {
 
     cy.visit(LOGS_DEV_PAGE_URL);
 
-    cy.getByTestId(TestIds.RefreshIntervalDropdown).should('exist');
-    cy.getByTestId(TestIds.TimeRangeDropdown).should('exist');
-    cy.getByTestId(TestIds.SyncButton).should('exist');
-    cy.getByTestId(TestIds.LogsQueryInput).should('not.exist');
+    cy.byTestID(TestIds.RefreshIntervalDropdown).should('exist');
+    cy.byTestID(TestIds.TimeRangeDropdown).should('exist');
+    cy.byTestID(TestIds.SyncButton).should('exist');
+    cy.byTestID(TestIds.LogsQueryInput).should('not.exist');
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
-    cy.getByTestId(TestIds.LogsQueryInput).should('exist');
+    cy.byTestID(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.LogsQueryInput).should('exist');
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
       });
 
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
 
-    cy.getByTestId(TestIds.LogsHistogram)
+    cy.byTestID(TestIds.LogsHistogram)
       .should('exist')
       .within(() => {
         cy.get('svg g > path').should('have.length.above', 0);
@@ -62,15 +62,15 @@ describe('Logs Dev Page', () => {
 
     cy.visit(LOGS_DEV_PAGE_URL);
 
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
       });
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).click();
+    cy.byTestID(TestIds.ExecuteQueryButton).click();
 
     cy.get('@queryRangeStreams.all').should('have.length.at.least', 1);
     cy.get('@queryRangeMatrix.all').should('have.length.at.least', 1);
@@ -87,17 +87,17 @@ describe('Logs Dev Page', () => {
 
     cy.visit(LOGS_DEV_PAGE_URL);
 
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.ShowQueryToggle).click();
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
       });
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea')
         .type('{selectAll}')
         .type('{ job = "some_job" }', {
@@ -122,19 +122,16 @@ describe('Logs Dev Page', () => {
 
     cy.visit(LOGS_DEV_PAGE_URL);
 
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
       });
 
-    cy.getByTestId(TestIds.SeverityDropdown)
-      .click()
-      .within(() => {
-        cy.contains('warning').click();
-      });
+    cy.byTestID(TestIds.SeverityDropdown).click();
+    cy.contains('warning').click();
 
     cy.get('@queryRangeStreams.all').should('have.length.at.least', 1);
     cy.get('@queryRangeMatrix.all').should('have.length.at.least', 1);
@@ -157,7 +154,7 @@ describe('Logs Dev Page', () => {
       expect(query).to.equal('{ kubernetes_namespace_name="my-namespace" } | json');
     });
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
@@ -181,14 +178,14 @@ describe('Logs Dev Page', () => {
       expect(query).to.equal('{ kubernetes_namespace_name="my-namespace" } | json');
     });
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
       });
 
-    cy.getByTestId(TestIds.NamespaceToggle).click();
-    cy.getByTestId(TestIds.NamespaceDropdown).contains('my-namespace-two').click();
+    cy.byTestID(TestIds.NamespaceToggle).click();
+    cy.byTestID(TestIds.NamespaceDropdown).contains('my-namespace-two').click();
 
     cy.wait('@queryRangeStreams').then(({ request }) => {
       const url = new URL(request.url);
@@ -222,14 +219,14 @@ describe('Logs Dev Page', () => {
       expect(query).to.equal('{ kubernetes_namespace_name="my-namespace" } | json');
     });
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
       });
 
-    cy.getByTestId(TestIds.NamespaceToggle).click();
-    cy.getByTestId(TestIds.NamespaceDropdown).contains('openshift-cluster-version').click();
+    cy.byTestID(TestIds.NamespaceToggle).click();
+    cy.byTestID(TestIds.NamespaceDropdown).contains('openshift-cluster-version').click();
 
     cy.wait('@queryRangeStreamsInfrastructure').then(({ request }) => {
       const url = new URL(request.url);
@@ -256,26 +253,23 @@ describe('Logs Dev Page', () => {
 
     cy.wait('@queryRangeStreams');
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
       });
 
-    cy.getByTestId(TestIds.AttributeFilters).within(() => {
-      cy.getByTestId(TestIds.AvailableAttributes)
-        .first()
-        .click({ force: true })
-        .parent()
-        .within(() => {
-          cy.contains('Pods').click({ force: true });
-        });
+    cy.byTestID(TestIds.AttributeFilters).within(() => {
+      cy.byTestID(TestIds.AvailableAttributes).click({ force: true });
+    });
+    cy.get('[role="option"]').contains('Pods').click({ force: true });
+    cy.byTestID(TestIds.AttributeFilters).within(() => {
       cy.get('input').invoke('attr', 'placeholder').should('contain', 'Filter by Pods');
-      cy.getByTestId(TestIds.AttributeOptions).within(() => {
+      cy.byTestID(TestIds.AttributeOptions).within(() => {
         cy.get('button').click({ force: true });
       });
-      cy.contains('my-pod').click({ force: true });
     });
+    cy.contains('my-pod').click({ force: true });
 
     cy.wait('@resourceQuery').then(({ request }) => {
       const url = new URL(request.url);
@@ -302,28 +296,25 @@ describe('Logs Dev Page', () => {
 
     cy.wait('@queryRangeStreams');
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
       });
 
-    cy.getByTestId(TestIds.AttributeFilters).within(() => {
-      cy.getByTestId(TestIds.AvailableAttributes)
-        .first()
-        .click({ force: true })
-        .parent()
-        .within(() => {
-          cy.contains('Pods').click({ force: true });
-        });
+    cy.byTestID(TestIds.AttributeFilters).within(() => {
+      cy.byTestID(TestIds.AvailableAttributes).click({ force: true });
+    });
+    cy.get('[role="option"]').contains('Pods').click({ force: true });
+    cy.byTestID(TestIds.AttributeFilters).within(() => {
       cy.get('input').invoke('attr', 'placeholder').should('contain', 'Filter by Pods');
-      cy.getByTestId(TestIds.AttributeOptions).within(() => {
+      cy.byTestID(TestIds.AttributeOptions).within(() => {
         cy.get('button').click({ force: true });
       });
-      cy.contains('You are not authorized to list pods in this namespace');
     });
+    cy.contains('You are not authorized to list pods in this namespace');
 
-    // cy.getByTestId(TestIds.AttributeFilters).within(() => {});
+    cy.byTestID(TestIds.AttributeFilters).within(() => {});
   });
 
   it('displays log based metrics when query results are matrix type', () => {
@@ -331,7 +322,7 @@ describe('Logs Dev Page', () => {
 
     cy.visit(LOGS_DEV_PAGE_URL);
 
-    cy.getByTestId(TestIds.LogsMetrics).should('exist');
+    cy.byTestID(TestIds.LogsMetrics).should('exist');
   });
 
   it('loads the current namespace as a filter in the query', () => {
@@ -339,9 +330,9 @@ describe('Logs Dev Page', () => {
 
     cy.visit(LOGS_DEV_PAGE_URL);
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.ShowQueryToggle).click();
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea').contains('kubernetes_namespace_name="my-namespace"');
     });
   });
@@ -351,16 +342,16 @@ describe('Logs Dev Page', () => {
 
     cy.visit(LOGS_DEV_PAGE_URL);
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.ShowQueryToggle).click();
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea').contains('kubernetes_namespace_name="my-namespace"');
     });
 
-    cy.getByTestId(TestIds.NamespaceToggle).click();
-    cy.getByTestId(TestIds.NamespaceDropdown).contains('my-namespace-two').click();
+    cy.byTestID(TestIds.NamespaceToggle).click();
+    cy.byTestID(TestIds.NamespaceDropdown).contains('my-namespace-two').click();
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea').contains('kubernetes_namespace_name="my-namespace-two"');
     });
   });
@@ -370,15 +361,15 @@ describe('Logs Dev Page', () => {
 
     cy.visit(LOGS_DEV_PAGE_URL);
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.ShowQueryToggle).click();
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea').type('{selectAll}').type('{backspace}').type('{ job = "some_job" }', {
         parseSpecialCharSequences: false,
       });
     });
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).should('be.disabled');
+    cy.byTestID(TestIds.ExecuteQueryButton).should('be.disabled');
 
     cy.contains('Please select a namespace');
   });
@@ -388,7 +379,7 @@ describe('Logs Dev Page', () => {
 
     cy.visit(LOGS_DEV_PAGE_URL);
 
-    cy.getByTestId(TestIds.LogsMetrics).should('exist');
+    cy.byTestID(TestIds.LogsMetrics).should('exist');
   });
 
   it('histogram is disabled and not visible when query results are matrix type', () => {
@@ -396,9 +387,9 @@ describe('Logs Dev Page', () => {
 
     cy.visit(LOGS_DEV_PAGE_URL);
 
-    cy.getByTestId(TestIds.LogsMetrics).should('exist');
-    cy.getByTestId(TestIds.ToggleHistogramButton).should('be.disabled');
-    cy.getByTestId(TestIds.LogsHistogram).should('not.exist');
+    cy.byTestID(TestIds.LogsMetrics).should('exist');
+    cy.byTestID(TestIds.ToggleHistogramButton).should('be.disabled');
+    cy.byTestID(TestIds.LogsHistogram).should('not.exist');
   });
 
   it('histogram is disabled after beign enabled by a streams result when query results are matrix type', () => {
@@ -410,17 +401,17 @@ describe('Logs Dev Page', () => {
 
     cy.visit(LOGS_DEV_PAGE_URL);
 
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
 
-    cy.getByTestId(TestIds.LogsHistogram)
+    cy.byTestID(TestIds.LogsHistogram)
       .should('exist')
       .within(() => {
         cy.get('svg g > path').should('have.length.above', 0);
       });
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.ShowQueryToggle).click();
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea')
         .type('{selectAll}')
         .type('{backspace}')
@@ -432,13 +423,13 @@ describe('Logs Dev Page', () => {
         );
     });
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).click();
+    cy.byTestID(TestIds.ExecuteQueryButton).click();
 
-    cy.getByTestId(TestIds.LogsMetrics).should('exist');
-    cy.getByTestId(TestIds.ToggleHistogramButton).should('be.disabled');
-    cy.getByTestId(TestIds.LogsHistogram).should('not.exist');
+    cy.byTestID(TestIds.LogsMetrics).should('exist');
+    cy.byTestID(TestIds.ToggleHistogramButton).should('be.disabled');
+    cy.byTestID(TestIds.LogsHistogram).should('not.exist');
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea')
         .type('{selectAll}')
         .type('{backspace}')
@@ -447,11 +438,11 @@ describe('Logs Dev Page', () => {
         });
     });
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).click();
-    cy.getByTestId(TestIds.LogsMetrics).should('not.exist');
-    cy.getByTestId(TestIds.ToggleHistogramButton).should('be.enabled');
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
-    cy.getByTestId(TestIds.LogsHistogram)
+    cy.byTestID(TestIds.ExecuteQueryButton).click();
+    cy.byTestID(TestIds.LogsMetrics).should('not.exist');
+    cy.byTestID(TestIds.ToggleHistogramButton).should('be.enabled');
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.LogsHistogram)
       .should('exist')
       .within(() => {
         cy.get('svg g > path').should('have.length.above', 0);
