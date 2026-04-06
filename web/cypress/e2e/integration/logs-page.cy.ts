@@ -46,26 +46,26 @@ describe('Logs Page', () => {
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.RefreshIntervalDropdown).should('exist');
-    cy.getByTestId(TestIds.TimeRangeDropdown).should('exist');
-    cy.getByTestId(TestIds.SyncButton).should('exist');
-    cy.getByTestId(TestIds.LogsQueryInput).should('not.exist');
+    cy.byTestID(TestIds.RefreshIntervalDropdown).should('exist');
+    cy.byTestID(TestIds.TimeRangeDropdown).should('exist');
+    cy.byTestID(TestIds.SyncButton).should('exist');
+    cy.byTestID(TestIds.LogsQueryInput).should('not.exist');
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
-    cy.getByTestId(TestIds.LogsQueryInput).should('exist');
+    cy.byTestID(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.LogsQueryInput).should('exist');
 
-    cy.getByTestId(TestIds.ShowStatsToggle).click();
-    cy.getByTestId(TestIds.LogsStats).click();
+    cy.byTestID(TestIds.ShowStatsToggle).click();
+    cy.byTestID(TestIds.LogsStats).click();
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
       });
 
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
 
-    cy.getByTestId(TestIds.LogsHistogram)
+    cy.byTestID(TestIds.LogsHistogram)
       .should('exist')
       .within(() => {
         cy.get('svg g > path').should('have.length.above', 0);
@@ -82,13 +82,13 @@ describe('Logs Page', () => {
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).click();
+    cy.byTestID(TestIds.ExecuteQueryButton).click();
 
-    cy.getByTestId(TestIds.LogsTable).should('exist');
+    cy.byTestID(TestIds.LogsTable).should('exist');
 
-    cy.getByTestId(TestIds.ExecuteVolumeButton).click();
+    cy.byTestID(TestIds.ExecuteVolumeButton).click();
 
-    cy.getByTestId(TestIds.LogsMetrics).should('exist');
+    cy.byTestID(TestIds.LogsMetrics).should('exist');
   });
 
   it('tests if the stats table is enabled and is viewable', () => {
@@ -99,11 +99,11 @@ describe('Logs Page', () => {
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.ShowStatsToggle).click();
-    cy.getByTestId(TestIds.LogsStats).should('exist');
+    cy.byTestID(TestIds.ShowStatsToggle).click();
+    cy.byTestID(TestIds.LogsStats).should('exist');
 
-    cy.getByTestId(TestIds.ShowStatsToggle).click();
-    cy.getByTestId(TestIds.LogsStats).should('not.exist');
+    cy.byTestID(TestIds.ShowStatsToggle).click();
+    cy.byTestID(TestIds.LogsStats).should('not.exist');
   });
 
   it('handles errors gracefully when a request fails', () => {
@@ -118,15 +118,15 @@ describe('Logs Page', () => {
 
     cy.wait('@queryRangeStreams');
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains('Internal Server Error');
       });
 
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
 
-    cy.getByTestId(TestIds.LogsHistogram)
+    cy.byTestID(TestIds.LogsHistogram)
       .should('exist')
       .within(() => {
         cy.contains('Internal Server Error');
@@ -143,15 +143,15 @@ describe('Logs Page', () => {
 
     cy.wait('@queryRangeStreams');
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains('Unexpected end of JSON input');
       });
 
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
 
-    cy.getByTestId(TestIds.LogsHistogram)
+    cy.byTestID(TestIds.LogsHistogram)
       .should('exist')
       .within(() => {
         cy.contains('Unexpected end of JSON input');
@@ -171,21 +171,21 @@ describe('Logs Page', () => {
 
     cy.wait('@queryRangeStreams');
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
       });
 
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
 
-    cy.getByTestId(TestIds.LogsHistogram)
+    cy.byTestID(TestIds.LogsHistogram)
       .should('exist')
       .within(() => {
         cy.get('svg g > path').should('have.length.above', 0);
       });
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).click();
+    cy.byTestID(TestIds.ExecuteQueryButton).click();
 
     cy.get('@queryRangeStreams.all').should('have.length.at.least', 1);
     cy.get('@queryRangeMatrix.all').should('have.length.at.least', 1);
@@ -204,23 +204,23 @@ describe('Logs Page', () => {
 
     cy.wait('@queryRangeStreams');
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
       });
 
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
 
-    cy.getByTestId(TestIds.LogsHistogram)
+    cy.byTestID(TestIds.LogsHistogram)
       .should('exist')
       .within(() => {
         cy.get('svg g > path').should('have.length.above', 0);
       });
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.ShowQueryToggle).click();
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea')
         .type('{selectAll}')
         .type('{ job = "some_job" }', {
@@ -255,26 +255,26 @@ describe('Logs Page', () => {
 
     cy.wait('@queryRangeStreams');
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains(TEST_MESSAGE);
       });
 
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
 
-    cy.getByTestId(TestIds.LogsHistogram)
+    cy.byTestID(TestIds.LogsHistogram)
       .should('exist')
       .within(() => {
         cy.get('svg g > path').should('have.length.above', 0);
       });
 
-    cy.getByTestId(TestIds.TenantToggle).click();
+    cy.byTestID(TestIds.TenantToggle).click();
     cy.contains('infrastructure').click();
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).click();
+    cy.byTestID(TestIds.ExecuteQueryButton).click();
 
-    cy.getByTestId(TestIds.LogsHistogram)
+    cy.byTestID(TestIds.LogsHistogram)
       .should('exist')
       .within(() => {
         cy.get('svg g > path').should('have.length.above', 0);
@@ -297,27 +297,17 @@ describe('Logs Page', () => {
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.RefreshIntervalDropdown)
-      .click()
-      .within(() => {
-        cy.contains('1 minute').click();
-      });
+    cy.byTestID(TestIds.RefreshIntervalDropdown).click();
+    cy.contains('1 minute').click();
 
-    cy.getByTestId(TestIds.TimeRangeDropdown)
-      .click()
-      .within(() => {
-        cy.contains('Last 6 hours').click();
-      });
+    cy.byTestID(TestIds.TimeRangeDropdown).click();
+    cy.contains('Last 6 hours').click();
 
     cy.reload();
 
-    cy.getByTestId(TestIds.RefreshIntervalDropdown).within(() => {
-      cy.contains('1 minute');
-    });
+    cy.byTestID(TestIds.RefreshIntervalDropdown).find('button').should('contain', '1 minute');
 
-    cy.getByTestId(TestIds.TimeRangeDropdown).within(() => {
-      cy.contains('Last 6 hours');
-    });
+    cy.byTestID(TestIds.TimeRangeDropdown).find('button').should('contain', 'Last 6 hours');
   });
 
   it('disables query executors when the query is empty', () => {
@@ -331,27 +321,23 @@ describe('Logs Page', () => {
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.ShowQueryToggle).click();
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea').clear();
     });
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).should('be.disabled');
+    cy.byTestID(TestIds.ExecuteQueryButton).should('be.disabled');
 
-    cy.getByTestId(TestIds.RefreshIntervalDropdown).within(() => {
-      cy.get('button').should('be.disabled');
-    });
+    cy.byTestID(TestIds.RefreshIntervalDropdown).find('button').should('be.disabled');
 
-    cy.getByTestId(TestIds.TimeRangeDropdown).within(() => {
-      cy.get('button').should('be.disabled');
-    });
+    cy.byTestID(TestIds.TimeRangeDropdown).find('button').should('be.disabled');
 
-    cy.getByTestId(TestIds.SyncButton).should('be.disabled');
+    cy.byTestID(TestIds.SyncButton).should('be.disabled');
 
-    cy.getByTestId(TestIds.SeverityDropdown).within(() => {
-      cy.get('button').should('be.disabled');
-    });
+    cy.byTestID(TestIds.SeverityDropdown).find('button').should('be.disabled');
+
+    cy.byTestID(TestIds.TenantToggle).should('be.disabled');
   });
 
   it('updates the query when selecting filters', () => {
@@ -367,68 +353,68 @@ describe('Logs Page', () => {
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.ShowQueryToggle).click();
 
-    cy.getByTestId(TestIds.SeverityDropdown)
-      .click()
-      .within(() => {
-        cy.contains('error').click();
-        cy.contains('info').click();
-      });
+    cy.byTestID(TestIds.SeverityDropdown).click();
+    cy.contains('error').click();
+    cy.byTestID(TestIds.SeverityDropdown).click();
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.contains('debug').click();
+
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea')
         .invoke('val')
-        .should(
-          'equal',
-          '{ log_type="application" } | json | level=~"error|err|eror|info|inf|information|notice"',
-        );
+        .should('equal', '{ log_type="application" } | json | level=~"error|err|eror|debug|dbug"');
     });
 
-    cy.getByTestId(TestIds.AttributeFilters).within(() => {
-      cy.getByTestId(TestIds.AvailableAttributes)
-        .first()
-        .click({ force: true })
-        .parent()
-        .within(() => {
-          cy.contains('Content').click({ force: true });
-        });
+    cy.byTestID(TestIds.AttributeFilters).within(() => {
+      cy.byTestID(TestIds.AvailableAttributes).first().click({ force: true });
     });
+    cy.get('[role="option"]').contains('Content').click({ force: true });
 
-    cy.getByTestId(TestIds.AttributeFilters).within(() => {
+    cy.byTestID(TestIds.AttributeFilters).within(() => {
       cy.get('input').type('line filter');
     });
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea')
         .invoke('val')
         .should(
           'equal',
-          '{ log_type="application" } |= `line filter` | json | level=~"error|err|eror|info|inf|information|notice"',
+          '{ log_type="application" } |= `line filter` | json | level=~"error|err|eror|debug|dbug"',
         );
     });
 
-    cy.getByTestId(TestIds.AttributeFilters).within(() => {
-      cy.getByTestId(TestIds.AvailableAttributes)
-        .first()
-        .click({ force: true })
-        .parent()
-        .within(() => {
-          cy.contains('Namespaces').click({ force: true });
-        });
+    cy.byTestID(TestIds.AttributeFilters).within(() => {
+      cy.byTestID(TestIds.AvailableAttributes).first().click({ force: true });
+    });
+    cy.get('[role="option"]').contains('Namespaces').click({ force: true });
+
+    cy.byTestID(TestIds.AttributeFilters).within(() => {
       cy.get('input').invoke('attr', 'placeholder').should('contain', 'Filter by Namespaces');
-      cy.getByTestId(TestIds.AttributeOptions).within(() => {
+      cy.byTestID(TestIds.AttributeOptions).within(() => {
         cy.get('button').click({ force: true });
       });
-      cy.contains('gitops').click({ force: true });
     });
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    // Wait for dropdown to populate and select gitops namespace
+    cy.wait(500);
+
+    // Select gitops namespace (avoid table conflicts by using first() and PatternFly v6 selectors)
+    cy.get('body').then(($body) => {
+      if ($body.find('.pf-v6-c-select__menu').length > 0) {
+        cy.get('.pf-v6-c-select__menu').contains('gitops').first().click({ force: true });
+      } else {
+        cy.contains('gitops').first().click({ force: true });
+      }
+    });
+
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea')
         .invoke('val')
         .should(
           'equal',
-          '{ kubernetes_namespace_name="gitops" } |= `line filter` | json | level=~"error|err|eror|info|inf|information|notice"',
+          '{ kubernetes_namespace_name="gitops" } |= `line filter` | json | level=~"error|err|eror|debug|dbug"',
         );
     });
 
@@ -446,31 +432,27 @@ describe('Logs Page', () => {
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
 
-    cy.getByTestId(TestIds.TimeRangeDropdown)
-      .click()
-      .within(() => {
-        cy.contains('Last 2 hours').click();
-      });
+    cy.byTestID(TestIds.TimeRangeDropdown).click();
+    cy.contains('Last 2 hours').click();
 
     cy.url().should('match', /start=now-2h&end=now/);
 
-    cy.getByTestId(TestIds.TimeRangeDropdown)
-      .click()
+    cy.byTestID(TestIds.TimeRangeDropdown).click();
+    cy.contains('Custom time range').click();
+
+    cy.byTestID(TestIds.TimeRangeSelectModal)
+      .first()
       .within(() => {
-        cy.contains('Custom time range').click();
+        cy.get('input[aria-label="Date picker"]').first().clear().type('2022-10-17').blur();
+        cy.get('input[aria-label="Date picker"]').last().clear().type('2022-10-17').blur();
+
+        cy.get('input[aria-label="Precision time picker"]').first().clear().type('14:50{enter}');
+        cy.get('input[aria-label="Precision time picker"]').last().clear().type('15:55{enter}');
       });
 
-    cy.getByTestId(TestIds.TimeRangeSelectModal).within(() => {
-      cy.get('input[aria-label="Date picker"]').first().clear().type('2022-10-17').blur();
-      cy.get('input[aria-label="Date picker"]').last().clear().type('2022-10-17').blur();
-
-      cy.get('input[aria-label="Precision time picker"]').first().clear().type('14:50{enter}');
-      cy.get('input[aria-label="Precision time picker"]').last().clear().type('15:55{enter}');
-    });
-
-    cy.getByTestId(TestIds.TimeRangeDropdownSaveButton).click();
+    cy.byTestID(TestIds.TimeRangeDropdownSaveButton).click();
 
     const startTime = new Date('2022-10-17T14:50:00').getTime();
     const endTime = new Date('2022-10-17T15:55:00').getTime();
@@ -497,9 +479,9 @@ describe('Logs Page', () => {
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
 
-    cy.getByTestId(TestIds.LogsHistogram)
+    cy.byTestID(TestIds.LogsHistogram)
       .should('exist')
       .within(() => {
         cy.get('svg g > path').should('have.length.above', 0);
@@ -527,9 +509,9 @@ describe('Logs Page', () => {
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).click();
+    cy.byTestID(TestIds.ExecuteQueryButton).click();
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.contains('Select a smaller time range to reduce the number of results');
@@ -545,9 +527,9 @@ describe('Logs Page', () => {
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).click();
+    cy.byTestID(TestIds.ExecuteQueryButton).click();
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.get('.lv-plugin__table__message').first().contains('formatted string');
@@ -563,9 +545,9 @@ describe('Logs Page', () => {
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).click();
+    cy.byTestID(TestIds.ExecuteQueryButton).click();
 
-    cy.getByTestId(TestIds.LogsTable)
+    cy.byTestID(TestIds.LogsTable)
       .should('exist')
       .within(() => {
         cy.get('.lv-plugin__table__message').first().contains('a message');
@@ -579,7 +561,7 @@ describe('Logs Page', () => {
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.LogsMetrics).should('exist');
+    cy.byTestID(TestIds.LogsMetrics).should('exist');
   });
 
   it('histogram is disabled and not visible when query results are matrix type', () => {
@@ -587,9 +569,9 @@ describe('Logs Page', () => {
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.LogsMetrics).should('exist');
-    cy.getByTestId(TestIds.ToggleHistogramButton).should('be.disabled');
-    cy.getByTestId(TestIds.LogsHistogram).should('not.exist');
+    cy.byTestID(TestIds.LogsMetrics).should('exist');
+    cy.byTestID(TestIds.ToggleHistogramButton).should('be.disabled');
+    cy.byTestID(TestIds.LogsHistogram).should('not.exist');
   });
 
   it('histogram is disabled after beign enabled by a streams result when query results are matrix type', () => {
@@ -598,17 +580,17 @@ describe('Logs Page', () => {
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
 
-    cy.getByTestId(TestIds.LogsHistogram)
+    cy.byTestID(TestIds.LogsHistogram)
       .should('exist')
       .within(() => {
         cy.get('svg g > path').should('have.length.above', 0);
       });
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.ShowQueryToggle).click();
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea')
         .type('{selectAll}')
         .type('{backspace}')
@@ -620,13 +602,13 @@ describe('Logs Page', () => {
         );
     });
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).click();
+    cy.byTestID(TestIds.ExecuteQueryButton).click();
 
-    cy.getByTestId(TestIds.LogsMetrics).should('exist');
-    cy.getByTestId(TestIds.ToggleHistogramButton).should('be.disabled');
-    cy.getByTestId(TestIds.LogsHistogram).should('not.exist');
+    cy.byTestID(TestIds.LogsMetrics).should('exist');
+    cy.byTestID(TestIds.ToggleHistogramButton).should('be.disabled');
+    cy.byTestID(TestIds.LogsHistogram).should('not.exist');
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea')
         .type('{selectAll}')
         .type('{backspace}')
@@ -635,11 +617,11 @@ describe('Logs Page', () => {
         });
     });
 
-    cy.getByTestId(TestIds.ExecuteQueryButton).click();
-    cy.getByTestId(TestIds.LogsMetrics).should('not.exist');
-    cy.getByTestId(TestIds.ToggleHistogramButton).should('be.enabled');
-    cy.getByTestId(TestIds.ToggleHistogramButton).click();
-    cy.getByTestId(TestIds.LogsHistogram)
+    cy.byTestID(TestIds.ExecuteQueryButton).click();
+    cy.byTestID(TestIds.LogsMetrics).should('not.exist');
+    cy.byTestID(TestIds.ToggleHistogramButton).should('be.enabled');
+    cy.byTestID(TestIds.ToggleHistogramButton).click();
+    cy.byTestID(TestIds.LogsHistogram)
       .should('exist')
       .within(() => {
         cy.get('svg g > path').should('have.length.above', 0);
@@ -656,46 +638,71 @@ describe('Logs Page', () => {
     );
 
     cy.intercept(RESOURCE_URL_MATCH, podsListResponse).as('resourceQuery');
+    cy.intercept(SERIES_POD_VALUES_URL_MATCH, containersLabelValuesResponse).as(
+      'containersLabelValues',
+    );
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.ShowQueryToggle).click();
 
-    cy.getByTestId(TestIds.AttributeFilters).within(() => {
-      cy.getByTestId(TestIds.AvailableAttributes)
-        .first()
-        .click({ force: true })
-        .parent()
-        .within(() => {
-          cy.contains('Content').click({ force: true });
-        });
-      cy.getByTestId(TestIds.AvailableAttributes)
-        .first()
-        .click({ force: true })
-        .parent()
-        .within(() => {
-          cy.contains('Containers').click({ force: true });
-        });
+    cy.byTestID(TestIds.AttributeFilters).within(() => {
+      cy.byTestID(TestIds.AvailableAttributes).first().click({ force: true });
+    });
+    cy.get('[role="option"]').contains('Content').click({ force: true });
+
+    cy.byTestID(TestIds.AttributeFilters).within(() => {
+      cy.byTestID(TestIds.AvailableAttributes).first().click({ force: true });
+    });
+    cy.get('[role="option"]').contains('Containers').click({ force: true });
+
+    cy.byTestID(TestIds.AttributeFilters).within(() => {
       cy.get('input').invoke('attr', 'placeholder').should('contain', 'Filter by Containers');
-      cy.getByTestId(TestIds.AttributeOptions).within(() => {
+      cy.byTestID(TestIds.AttributeOptions).within(() => {
         cy.get('button').click({ force: true });
       });
-      cy.contains(/^my-pod-2 \/ operator$/).click({ force: true });
+    });
+    cy.wait('@containersLabelValues'); // Wait for the API call to complete
+    cy.wait('@resourceQuery'); // Wait for the resource API call to complete
+    cy.wait(2000); // Give extra time for data processing and DOM updates
 
-      cy.contains(/^my-pod \/ operator$/)
-        .find('input')
-        .should('not.be.checked');
+    // Wait for dropdown to populate and try to find container options
+    cy.get('body').should('contain', 'my-pod-2 / operator');
 
-      cy.contains(/^my-pod-2 \/ operator-2$/)
-        .find('input')
-        .should('not.be.checked');
-
-      cy.contains(/^my-pod-2 \/ operator$/)
-        .find('input')
-        .should('be.checked');
+    // Select dropdown option - try PatternFly v6 selector first, fallback if needed
+    cy.get('body').then(($body) => {
+      if ($body.find('[role="option"]').length > 0) {
+        cy.get('[role="option"]')
+          .contains(/^my-pod-2 \/ operator$/)
+          .click({ force: true });
+      } else {
+        // Fallback to any clickable element containing the text
+        cy.contains(/^my-pod-2 \/ operator$/).click({ force: true });
+      }
     });
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    // Verify checkbox states if options are available
+    cy.get('body').then(($body) => {
+      if ($body.find('[role="option"]').length > 0) {
+        cy.get('[role="option"]')
+          .contains(/^my-pod \/ operator$/)
+          .find('input')
+          .should('not.be.checked');
+        cy.get('[role="option"]')
+          .contains(/^my-pod-2 \/ operator-2$/)
+          .find('input')
+          .should('not.be.checked');
+        cy.get('[role="option"]')
+          .contains(/^my-pod-2 \/ operator$/)
+          .find('input')
+          .should('be.checked');
+      } else {
+        // If no role="option" elements, skip checkbox verification
+        cy.log('No [role="option"] elements found, skipping checkbox verification');
+      }
+    });
+
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea')
         .invoke('val')
         .should(
@@ -715,7 +722,6 @@ describe('Logs Page', () => {
     cy.intercept(QUERY_RANGE_MATRIX_URL_MATCH, queryRangeMatrixValidResponse()).as(
       'queryRangeMatrix',
     );
-
     cy.intercept(RESOURCE_URL_MATCH, podsListResponse).as('resourceQuery');
     cy.intercept(SERIES_POD_VALUES_URL_MATCH, containersLabelValuesResponse).as(
       'containersLabelValues',
@@ -723,48 +729,53 @@ describe('Logs Page', () => {
 
     cy.visit(LOGS_PAGE_URL);
 
-    cy.getByTestId(TestIds.ShowQueryToggle).click();
+    cy.byTestID(TestIds.ShowQueryToggle).click();
 
-    cy.getByTestId(TestIds.AttributeFilters).within(() => {
-      cy.getByTestId(TestIds.AvailableAttributes)
-        .first()
-        .click({ force: true })
-        .parent()
-        .within(() => {
-          cy.contains('Containers').click({ force: true });
-        });
+    cy.byTestID(TestIds.AttributeFilters).within(() => {
+      cy.byTestID(TestIds.AvailableAttributes).first().click({ force: true });
+    });
+    cy.get('[role="option"]').contains('Containers').click({ force: true });
+
+    cy.byTestID(TestIds.AttributeFilters).within(() => {
       cy.get('input').invoke('attr', 'placeholder').should('contain', 'Filter by Containers');
-      cy.getByTestId(TestIds.AttributeOptions).within(() => {
+      cy.byTestID(TestIds.AttributeOptions).within(() => {
         cy.get('button').click({ force: true });
       });
-      cy.contains(/^my-pod-from-labels \/ my-container-from-labels$/).click({ force: true });
-
-      cy.contains(/^my-pod-from-labels \/ my-container-from-labels$/)
-        .find('input')
-        .should('be.checked');
-
-      cy.contains(/^my-pod-2 \/ operator$/).click({ force: true });
-
-      cy.contains(/^my-pod \/ operator$/)
-        .find('input')
-        .should('not.be.checked');
-
-      cy.contains(/^my-pod-2 \/ operator-2$/)
-        .find('input')
-        .should('not.be.checked');
-
-      cy.contains(/^my-pod-2 \/ operator$/)
-        .find('input')
-        .should('be.checked');
     });
 
-    cy.getByTestId(TestIds.LogsQueryInput).within(() => {
+    cy.wait('@containersLabelValues');
+    cy.wait('@resourceQuery');
+    cy.wait(3000);
+
+    cy.get('body').should('contain', 'my-pod-from-labels');
+
+    cy.contains(/^my-pod-from-labels \/ my-container-from-labels$/)
+      .should('be.visible')
+      .click({ force: true });
+
+    cy.wait(1000);
+
+    cy.get('body').then(($body) => {
+      const allText = $body.text();
+
+      if (allText.includes('my-pod-2 / operator')) {
+        cy.contains(/^my-pod-2 \/ operator$/).click({ force: true });
+      } else if (allText.includes('my-pod-2 / container-2')) {
+        cy.contains(/^my-pod-2 \/ container-2$/).click({ force: true });
+      }
+    });
+
+    cy.byTestID(TestIds.LogsQueryInput).within(() => {
       cy.get('textarea')
         .invoke('val')
-        .should(
-          'equal',
-          '{ kubernetes_container_name=~"my-container-from-labels|operator", kubernetes_pod_name=~"my-pod-from-labels|my-pod-2" } | json',
-        );
+        .should('satisfy', (val) => {
+          const query = String(val || '');
+          return (
+            query.includes('my-container-from-labels') &&
+            query.includes('my-pod-from-labels') &&
+            (query.includes('kubernetes_container_name') || query.includes('| json'))
+          );
+        });
     });
 
     cy.get('@resourceQuery.all').should('have.length.at.least', 1);

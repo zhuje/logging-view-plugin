@@ -6,7 +6,7 @@ const parseValue = <T,>(value: string | null): T | null => {
       const json = JSON.parse(value);
       return json as T;
       // eslint-disable-next-line no-empty
-    } catch (ignore) {}
+    } catch {}
   }
 
   return null;

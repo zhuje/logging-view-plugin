@@ -8,5 +8,5 @@
 }
 
 .lv-plugin__time-picker__error {
-  padding-top: 'var(--pf-v5-global--spacer--xs)';
+  padding-top: var(--pf-t--global--spacer--xs);
 }

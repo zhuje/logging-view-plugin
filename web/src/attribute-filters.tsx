@@ -204,15 +204,15 @@ const getNamespaceAttributeOptions = (
     return true;
   };
 
-  const filteredProjectList = projectsDataSource(tenantFilter)();
-  const filteredLokiNamespaceList = lokiLabelValuesDataSource({
-    config,
-    tenant,
-    labelName: namespaceLabel,
-  })().then((options) => options.filter((opt) => lokiTenantFilter(opt.value)));
+  return () => {
+    const filteredProjectList = projectsDataSource(tenantFilter)();
+    const filteredLokiNamespaceList = lokiLabelValuesDataSource({
+      config,
+      tenant,
+      labelName: namespaceLabel,
+    })().then((options) => options.filter((opt) => lokiTenantFilter(opt.value)));
 
-  return () =>
-    Promise.allSettled<Option[]>([filteredProjectList, filteredLokiNamespaceList]).then(
+    return Promise.allSettled<Option[]>([filteredProjectList, filteredLokiNamespaceList]).then(
       (results) => {
         const namespaceOptions: Set<string> = new Set();
         results.forEach((result) => {
@@ -227,6 +227,7 @@ const getNamespaceAttributeOptions = (
           .map((ns) => ({ option: ns, value: ns }));
       },
     );
+  };
 };
 
 // The logs-page and the logs-dev-page both need a default set of attributes to pass

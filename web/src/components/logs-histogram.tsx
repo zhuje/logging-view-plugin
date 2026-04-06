@@ -1,12 +1,12 @@
+import { ChartLegendTooltipProps } from '@patternfly/react-charts/victory';
 import {
   Chart,
   ChartAxis,
   ChartBar,
   ChartLegendTooltip,
-  ChartLegendTooltipProps,
   ChartStack,
   createContainer,
-} from '@patternfly/react-charts';
+} from '@patternfly/react-charts/victory';
 import { getResizeObserver } from '@patternfly/react-core';
 import { Alert, Card, CardBody } from '@patternfly/react-core';
 import React from 'react';

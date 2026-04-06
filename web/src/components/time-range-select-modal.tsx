@@ -1,11 +1,6 @@
-import {
-  Alert,
-  Button,
-  DatePicker,
-  Modal,
-  ModalBoxBody,
-  ModalVariant,
-} from '@patternfly/react-core';
+import { Alert, Button, DatePicker, ModalFooter, ModalHeader } from '@patternfly/react-core';
+import { Modal, ModalBody, ModalVariant } from '@patternfly/react-core';
+// import { Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core/deprecated';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -148,47 +143,36 @@ export const TimeRangeSelectModal: React.FC<TimeRangeSelectModalProps> = ({
       id="date-time-picker-modal"
       className="modal-dialog lv-plugin__time-range-modal"
       variant={ModalVariant.small}
+      width="auto"
       title="Custom time range"
       position="top"
       isOpen
       onEscapePress={onClose}
       onClose={onClose}
-      showClose={false}
-      hasNoBodyWrapper={true}
       aria-label="date-time-picker-modal"
       data-test={TestIds.TimeRangeSelectModal}
-      footer={
-        <div className="lv-plugin__time-range-modal__footer">
-          <Button
-            key="confirm"
-            variant="primary"
-            onClick={handleSelectRange}
-            isDisabled={!isRangeSelected || !isRangeValid}
-            data-test={TestIds.TimeRangeDropdownSaveButton}
-          >
-            {t('Save')}
-          </Button>
-          <Button key="cancel" variant="secondary" onClick={onClose}>
-            {t('Cancel')}
-          </Button>
-        </div>
-      }
     >
-      <ModalBoxBody
+      <ModalHeader title="Custom time range" labelId="scrollable-modal-title" />
+      <ModalBody
         className="lv-plugin__time-range-modal__body"
         data-test={TestIds.TimeRangeSelectModal}
+        tabIndex={0}
       >
         <div>
           <label>{t('From')}</label>
           <div className="lv-plugin__time-range-modal__field">
-            <DatePicker onChange={handleStartDateChange} value={startDate} />
+            <DatePicker
+              onChange={handleStartDateChange}
+              value={startDate}
+              appendTo={document.body}
+            />
             <PrecisionTimePicker time={startTime} onChange={handleStartTimeChange} />
           </div>
         </div>
         <div>
           <label>{t('To')}</label>
           <div className="lv-plugin__time-range-modal__field">
-            <DatePicker onChange={handleEndDateChange} value={endDate} />
+            <DatePicker onChange={handleEndDateChange} value={endDate} appendTo={document.body} />
             <PrecisionTimePicker time={endTime} onChange={handleEndTimeChange} />
           </div>
           {!isRangeValid && (
@@ -201,7 +185,21 @@ export const TimeRangeSelectModal: React.FC<TimeRangeSelectModalProps> = ({
             />
           )}
         </div>
-      </ModalBoxBody>
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          key="confirm"
+          variant="primary"
+          onClick={handleSelectRange}
+          isDisabled={!isRangeSelected || !isRangeValid}
+          data-test={TestIds.TimeRangeDropdownSaveButton}
+        >
+          {t('Save')}
+        </Button>
+        <Button key="cancel" variant="secondary" onClick={onClose}>
+          {t('Cancel')}
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 };

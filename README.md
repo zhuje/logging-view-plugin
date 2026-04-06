@@ -67,6 +67,15 @@ make test-unit
 make test-frontend
 ```
 
+#### Open Cypress UI
+
+```sh
+make run-frontend-standalone
+
+# in a seperate terminal
+make open-cypress
+```
+
 this will build the frontend in standalone mode and run the cypress tests
 
 ## Deployment on cluster

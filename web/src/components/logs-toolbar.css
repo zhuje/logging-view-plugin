@@ -1,5 +1,5 @@
 .lv-plugin__toolbar {
-  gap: var(--pf-v5-global--spacer--md);
+  gap: var(--pf-t--global--spacer--md);
 }
 
 .lv-plugin__severity-filter {
@@ -7,6 +7,6 @@
 }
 
 .lv-plugin__toolbar .lv-plugin__expression-input {
-  padding-right: var(--pf-v5-c-toolbar__content--PaddingRight);
-  padding-left: var(--pf-v5-c-toolbar__content--PaddingLeft);
+  padding-right: var(--pf-v6-c-toolbar__content--PaddingInlineEnd);
+  padding-left: var(--pf-v6-c-toolbar__content--PaddingInlineStart);
 }

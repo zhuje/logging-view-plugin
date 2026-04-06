@@ -28,9 +28,17 @@ test-unit-frontend:
 build-frontend-standalone:
 	cd web && npm run build:standalone
 
+.PHONY: run-frontend-standalone
+run-frontend-standalone: build-frontend-standalone
+	cd web && npm run start:standalone
+
 .PHONY: test-frontend
 test-frontend: test-unit-frontend build-frontend-standalone
 	cd web && npm run test
+
+.PHONY: open-cypress
+open-cypress: test-unit-frontend  
+	cd web && npm run cypress:open
 
 .PHONY: build-frontend
 build-frontend:
@@ -83,3 +91,4 @@ deploy:
 	helm uninstall logging-view-plugin -n logging-view-plugin || true
 	PUSH=1 scripts/build-image.sh
 	helm install logging-view-plugin charts/openshift-console-plugin -n logging-view-plugin --create-namespace --set plugin.image=${IMAGE}
+
