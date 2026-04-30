@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -25,6 +26,58 @@ type Config struct {
 	StaticPath       string
 	ConfigPath       string
 	PluginConfigPath string
+	TLSMinVersion    uint16
+	TLSCipherSuites  []uint16
+}
+
+func (cfg *Config) IsTLSEnabled() bool {
+	return cfg.CertFile != "" && cfg.PrivateKeyFile != ""
+}
+
+func (cfg *Config) ValidateTLSConfig() error {
+	if !cfg.IsTLSEnabled() {
+		return nil
+	}
+
+	if (cfg.CertFile == "") != (cfg.PrivateKeyFile == "") {
+		return fmt.Errorf("both cert file and private key file must be set together")
+	}
+
+	if _, err := os.Stat(cfg.CertFile); err != nil {
+		return fmt.Errorf("cert file error: %v", err)
+	}
+
+	if _, err := os.Stat(cfg.PrivateKeyFile); err != nil {
+		return fmt.Errorf("key file error: %v", err)
+	}
+
+	return nil
+}
+
+type PluginServer struct {
+	*http.Server
+	Config *Config
+	cancel context.CancelFunc
+}
+
+func (s *PluginServer) StartHTTPServer() error {
+	if s.Config.IsTLSEnabled() {
+		slog.Infof("listening for https on %s", s.Addr)
+		return s.ListenAndServeTLS(s.Config.CertFile, s.Config.PrivateKeyFile)
+	}
+	slog.Infof("listening for http on %s", s.Addr)
+	return s.ListenAndServe()
+}
+
+// Shutdown gracefully shuts down the server
+func (s *PluginServer) Shutdown(ctx context.Context) error {
+	if s.cancel != nil {
+		s.cancel()
+	}
+	if s.Server != nil {
+		return s.Server.Shutdown(ctx)
+	}
+	return nil
 }
 
 type PluginConfig struct {
@@ -47,31 +100,68 @@ func (pluginConfig *PluginConfig) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func Start(cfg *Config) {
+func CreateServer(ctx context.Context, cfg *Config) (*PluginServer, error) {
+	if err := cfg.ValidateTLSConfig(); err != nil {
+		return nil, fmt.Errorf("TLS config validation failed: %v", err)
+	}
+
+	serverCtx, cancel := context.WithCancel(ctx)
+	httpServer, err := createHTTPServer(serverCtx, cfg)
+	if err != nil {
+		cancel()
+		return nil, err
+	}
+
+	return &PluginServer{
+		Server: httpServer,
+		Config: cfg,
+		cancel: cancel,
+	}, nil
+}
+
+func createHTTPServer(ctx context.Context, cfg *Config) (*http.Server, error) {
 	router := setupRoutes(cfg)
 	router.Use(corsHeaderMiddleware(cfg))
-
-	loggedRouter := handlers.LoggingHandler(slog.Logger.Out, router)
 
 	// clients must use TLS 1.2 or higher
 	tlsConfig := &tls.Config{
 		MinVersion: tls.VersionTLS12,
 	}
 
+	if cfg.TLSMinVersion != 0 {
+		tlsConfig.MinVersion = cfg.TLSMinVersion
+	}
+
+	if len(cfg.TLSCipherSuites) > 0 {
+		tlsConfig.CipherSuites = cfg.TLSCipherSuites
+	}
+
 	httpServer := &http.Server{
-		Handler:      loggedRouter,
+		Handler:      router,
 		Addr:         fmt.Sprintf(":%d", cfg.Port),
 		TLSConfig:    tlsConfig,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}
 
-	if cfg.CertFile != "" && cfg.PrivateKeyFile != "" {
-		slog.Infof("listening on https://:%d", cfg.Port)
-		panic(httpServer.ListenAndServeTLS(cfg.CertFile, cfg.PrivateKeyFile))
-	} else {
-		slog.Infof("listening on http://:%d", cfg.Port)
-		panic(httpServer.ListenAndServe())
+	if logrus.GetLevel() == logrus.TraceLevel {
+		loggedRouter := handlers.LoggingHandler(slog.Logger.Out, router)
+		httpServer.Handler = loggedRouter
+	}
+
+	return httpServer, nil
+}
+
+func Start(cfg *Config) {
+	// Legacy function - redirect to new pattern for backward compatibility
+	ctx := context.Background()
+	srv, err := CreateServer(ctx, cfg)
+	if err != nil {
+		slog.WithError(err).Fatal("failed to create server")
+	}
+
+	if err := srv.StartHTTPServer(); err != nil {
+		slog.WithError(err).Fatal("failed to start server")
 	}
 }
 
@@ -95,6 +185,18 @@ func setupRoutes(cfg *Config) *mux.Router {
 	return r
 }
 
+type headerPreservingWriter struct {
+	http.ResponseWriter
+	wroteHeader bool
+}
+
+func (w *headerPreservingWriter) WriteHeader(statusCode int) {
+	if !w.wroteHeader {
+		w.wroteHeader = true
+		w.ResponseWriter.WriteHeader(statusCode)
+	}
+}
+
 func filesHandler(root http.FileSystem) http.Handler {
 	fileServer := http.FileServer(root)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -104,6 +206,8 @@ func filesHandler(root http.FileSystem) http.Handler {
 		if strings.HasPrefix(filePath, "/plugin-entry.js") {
 			w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 			w.Header().Set("Expires", "0")
+			fileServer.ServeHTTP(&headerPreservingWriter{ResponseWriter: w}, r)
+			return
 		}
 
 		fileServer.ServeHTTP(w, r)
