@@ -667,3 +667,60 @@ func TestTLSConfigMinVersionOnly(t *testing.T) {
 		t.Fatalf("Failed: should not have been able to connect with TLS 1.2 when min is TLS 1.3")
 	}
 }
+
+func TestTLSConfigValidation(t *testing.T) {
+	tests := []struct {
+		name           string
+		certFile       string
+		privateKeyFile string
+		expectError    bool
+		expectedError  string
+	}{
+		{
+			name:           "no TLS config - valid",
+			certFile:       "",
+			privateKeyFile: "",
+			expectError:    false,
+		},
+		{
+			name:           "both cert and key provided - valid when files exist",
+			certFile:       "/valid/cert.pem",
+			privateKeyFile: "/valid/key.pem",
+			expectError:    true, // Files don't exist, but that's expected
+		},
+		{
+			name:           "only cert file provided - invalid",
+			certFile:       "/path/to/cert.pem",
+			privateKeyFile: "",
+			expectError:    true,
+			expectedError:  "both CertFile and PrivateKeyFile must be provided to enable TLS",
+		},
+		{
+			name:           "only key file provided - invalid",
+			certFile:       "",
+			privateKeyFile: "/path/to/key.pem",
+			expectError:    true,
+			expectedError:  "both CertFile and PrivateKeyFile must be provided to enable TLS",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			cfg := &Config{
+				CertFile:       tc.certFile,
+				PrivateKeyFile: tc.privateKeyFile,
+			}
+
+			err := cfg.ValidateTLSConfig()
+
+			if tc.expectError {
+				require.Error(t, err)
+				if tc.expectedError != "" {
+					require.Contains(t, err.Error(), tc.expectedError)
+				}
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}

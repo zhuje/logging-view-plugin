@@ -40,7 +40,14 @@ func (cfg *Config) IsTLSEnabled() bool {
 }
 
 func (cfg *Config) ValidateTLSConfig() error {
-	if !cfg.IsTLSEnabled() {
+	certSet := cfg.CertFile != ""
+	keySet := cfg.PrivateKeyFile != ""
+
+	if certSet != keySet {
+		return fmt.Errorf("both CertFile and PrivateKeyFile must be provided to enable TLS")
+	}
+
+	if !certSet && !keySet {
 		return nil
 	}
 
