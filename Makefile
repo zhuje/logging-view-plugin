@@ -31,6 +31,10 @@ build-frontend-standalone:
 .PHONY: test-frontend
 test-frontend: test-unit-frontend build-frontend-standalone
 	cd web && npm run test
+	
+.PHONY: test-backend
+test-backend:
+	go test ./pkg/... -v
 
 .PHONY: build-frontend
 build-frontend:
