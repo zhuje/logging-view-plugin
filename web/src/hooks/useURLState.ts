@@ -1,4 +1,4 @@
-import { DependencyList, useCallback, useEffect, useMemo, useState } from 'react';
+import { DependencyList, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { filtersFromQuery, queryFromFilters } from '../attribute-filters';
 import { AttributeList, Filters } from '../components/filters/filter.types';
@@ -124,18 +124,15 @@ export const useURLState = ({
       : undefined,
   );
 
-  const setQueryInURL = useCallback(
-    (newQuery: string, replace?: boolean) => {
-      const trimmedQuery = newQuery.trim();
-      const newQueryParams = new URLSearchParams(queryParams);
-      newQueryParams.set(QUERY_PARAM_KEY, trimmedQuery);
-      navigate(
-        `${location.pathname}?${newQueryParams.toString()}`,
-        replace ? { replace: true } : undefined,
-      );
-    },
-    [queryParams, navigate, location.pathname],
-  );
+  const setQueryInURL = (newQuery: string, replace?: boolean) => {
+    const trimmedQuery = newQuery.trim();
+    const newQueryParams = new URLSearchParams(queryParams);
+    newQueryParams.set(QUERY_PARAM_KEY, trimmedQuery);
+    navigate(
+      `${location.pathname}?${newQueryParams.toString()}`,
+      replace ? { replace: true } : undefined,
+    );
+  };
 
   const setTenantInURL = (selectedTenant: string) => {
     const newQueryParams = new URLSearchParams(queryParams);
@@ -233,16 +230,8 @@ export const useURLState = ({
         }
       }
     }
-  }, [
-    initialSchema,
-    schema,
-    configLoaded,
-    config?.schema,
-    setQueryInURL,
-    getDefaultQuery,
-    initialTenant,
-    queryParams,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialSchema, schema, configLoaded]);
 
   useEffect(() => {
     const schemaValue = getSchema(queryParams.get(SCHEMA_PARAM_KEY) ?? config?.schema);
