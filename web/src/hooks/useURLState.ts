@@ -1,5 +1,5 @@
 import { DependencyList, useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { filtersFromQuery, queryFromFilters } from '../attribute-filters';
 import { AttributeList, Filters } from '../components/filters/filter.types';
 import { getBrowserTimezone } from '../date-utils';
@@ -8,7 +8,6 @@ import { ResourceLabel, ResourceToStreamLabels } from '../parse-resources';
 import { intervalFromTimeRange } from '../time-range';
 import { getSchema } from '../value-utils';
 import { useLogsConfig } from './LogsConfigProvider';
-import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 interface UseURLStateHook {
@@ -139,14 +138,16 @@ export const useURLState = ({
   );
 
   const setTenantInURL = (selectedTenant: string) => {
-    queryParams.set(QUERY_PARAM_KEY, ''); // reset query when changing tenant
-    queryParams.set(TENANT_PARAM_KEY, selectedTenant);
-    navigate(`${location.pathname}?${queryParams.toString()}`);
+    const newQueryParams = new URLSearchParams(queryParams);
+    newQueryParams.set(QUERY_PARAM_KEY, ''); // reset query when changing tenant
+    newQueryParams.set(TENANT_PARAM_KEY, selectedTenant);
+    navigate(`${location.pathname}?${newQueryParams.toString()}`);
   };
 
   const setSchemaInURL = (selectedSchema: Schema) => {
+    const newQueryParams = new URLSearchParams(queryParams);
     if (selectedSchema) {
-      queryParams.set(SCHEMA_PARAM_KEY, selectedSchema as string);
+      newQueryParams.set(SCHEMA_PARAM_KEY, selectedSchema as string);
 
       // re create query based on current filters and new schema
       const newQuery = queryFromFilters({
@@ -157,43 +158,48 @@ export const useURLState = ({
         schema: selectedSchema,
         addJSONParser: true,
       });
-      queryParams.set(QUERY_PARAM_KEY, newQuery);
+      newQueryParams.set(QUERY_PARAM_KEY, newQuery);
 
-      navigate(`${location.pathname}?${queryParams.toString()}`);
+      navigate(`${location.pathname}?${newQueryParams.toString()}`);
     } else {
-      queryParams.delete(SCHEMA_PARAM_KEY);
-      navigate(`${location.pathname}?${queryParams.toString()}`);
+      newQueryParams.delete(SCHEMA_PARAM_KEY);
+      navigate(`${location.pathname}?${newQueryParams.toString()}`);
     }
   };
 
   const setShowResourcesInURL = (showResources: boolean) => {
-    queryParams.set(SHOW_RESOURCES_PARAM_KEY, showResources ? '1' : '0');
-    navigate(`${location.pathname}?${queryParams.toString()}`);
+    const newQueryParams = new URLSearchParams(queryParams);
+    newQueryParams.set(SHOW_RESOURCES_PARAM_KEY, showResources ? '1' : '0');
+    navigate(`${location.pathname}?${newQueryParams.toString()}`);
   };
 
   const setShowStatsInURL = (showStats: boolean) => {
-    queryParams.set(SHOW_STATS_PARAM_KEY, showStats ? '1' : '0');
-    navigate(`${location.pathname}?${queryParams.toString()}`);
+    const newQueryParams = new URLSearchParams(queryParams);
+    newQueryParams.set(SHOW_STATS_PARAM_KEY, showStats ? '1' : '0');
+    navigate(`${location.pathname}?${newQueryParams.toString()}`);
   };
 
   const setTimeRangeInURL = (selectedTimeRange: TimeRange) => {
-    queryParams.set(TIME_RANGE_START, String(selectedTimeRange.start));
-    queryParams.set(TIME_RANGE_END, String(selectedTimeRange.end));
-    navigate(`${location.pathname}?${queryParams.toString()}`);
+    const newQueryParams = new URLSearchParams(queryParams);
+    newQueryParams.set(TIME_RANGE_START, String(selectedTimeRange.start));
+    newQueryParams.set(TIME_RANGE_END, String(selectedTimeRange.end));
+    navigate(`${location.pathname}?${newQueryParams.toString()}`);
   };
 
   const setDirectionInURL = (selectedDirection?: 'forward' | 'backward') => {
+    const newQueryParams = new URLSearchParams(queryParams);
     if (selectedDirection) {
-      queryParams.set(DIRECTION, selectedDirection);
+      newQueryParams.set(DIRECTION, selectedDirection);
     } else {
-      queryParams.delete(DIRECTION);
+      newQueryParams.delete(DIRECTION);
     }
-    navigate(`${location.pathname}?${queryParams.toString()}`);
+    navigate(`${location.pathname}?${newQueryParams.toString()}`);
   };
 
   const setTimezoneInURL = (selectedTimezone: string) => {
-    queryParams.set(TIMEZONE_PARAM_KEY, selectedTimezone);
-    navigate(`${location.pathname}?${queryParams.toString()}`);
+    const newQueryParams = new URLSearchParams(queryParams);
+    newQueryParams.set(TIMEZONE_PARAM_KEY, selectedTimezone);
+    navigate(`${location.pathname}?${newQueryParams.toString()}`);
     // Also persist to localStorage
     try {
       window.localStorage.setItem(STORED_TIMEZONE_KEY, JSON.stringify(selectedTimezone));
