@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, FC, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { defaultConfig, getConfig } from '../backend-client';
 import { Config } from '../logs.types';
 
@@ -9,9 +9,7 @@ interface LogsContextType {
 
 export const LogsContext = createContext<LogsContextType | undefined>(undefined);
 
-export const LogsConfigProvider: React.FC<{ children?: React.ReactNode | undefined }> = ({
-  children,
-}) => {
+export const LogsConfigProvider: FC<{ children?: ReactNode | undefined }> = ({ children }) => {
   const [config, setConfig] = useState<Config>(defaultConfig);
   const [configLoaded, setConfigLoaded] = useState(false);
 

@@ -1,5 +1,5 @@
-import React, { DependencyList, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
+import { DependencyList, useCallback, useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 import { filtersFromQuery, queryFromFilters } from '../attribute-filters';
 import { AttributeList, Filters } from '../components/filters/filter.types';
 import { getBrowserTimezone } from '../date-utils';
@@ -8,7 +8,7 @@ import { ResourceLabel, ResourceToStreamLabels } from '../parse-resources';
 import { intervalFromTimeRange } from '../time-range';
 import { getSchema } from '../value-utils';
 import { useLogsConfig } from './LogsConfigProvider';
-import { useQueryParams } from './useQueryParams';
+import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 interface UseURLStateHook {
@@ -67,7 +67,7 @@ export const useURLState = ({
   attributesDependencies,
 }: UseURLStateHook) => {
   const { t } = useTranslation('plugin__logging-view-plugin');
-  const queryParams = useQueryParams();
+  const [queryParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
   const { config, configLoaded } = useLogsConfig();
@@ -101,22 +101,22 @@ export const useURLState = ({
   const initialTimezone =
     queryParams.get(TIMEZONE_PARAM_KEY) ?? getStoredTimezone() ?? getBrowserTimezone();
 
-  const [query, setQuery] = React.useState(initialQuery);
-  const [tenant, setTenant] = React.useState(initialTenant);
-  const [schema, setSchema] = React.useState(initialSchema);
-  const attributes = React.useMemo<AttributeList>(
-    () => (getAttributes ? getAttributes({ tenant, config, schema, t }) ?? [] : []),
-    [tenant, config, schema, ...(attributesDependencies || [])],
+  const [query, setQuery] = useState(initialQuery);
+  const [tenant, setTenant] = useState(initialTenant);
+  const [schema, setSchema] = useState(initialSchema);
+  const attributes = useMemo<AttributeList>(
+    () => (getAttributes ? (getAttributes({ tenant, config, schema, t }) ?? []) : []),
+    [tenant, config, schema, ...(attributesDependencies || [])], // eslint-disable-line
   );
-  const [filters, setFilters] = React.useState<Filters | undefined>(
+  const [filters, setFilters] = useState<Filters | undefined>(
     filtersFromQuery({ query: initialQuery, attributes, schema }),
   );
 
-  const [areResourcesShown, setAreResourcesShown] = React.useState<boolean>(initialResorcesShown);
-  const [areStatsShown, setAreStatsShown] = React.useState<boolean>(intitalStatsShown);
-  const [direction, setDirection] = React.useState<Direction>(getDirectionValue(initialDirection));
-  const [timezone, setTimezone] = React.useState<string>(initialTimezone);
-  const [timeRange, setTimeRange] = React.useState<TimeRange | undefined>(
+  const [areResourcesShown, setAreResourcesShown] = useState<boolean>(initialResorcesShown);
+  const [areStatsShown, setAreStatsShown] = useState<boolean>(intitalStatsShown);
+  const [direction, setDirection] = useState<Direction>(getDirectionValue(initialDirection));
+  const [timezone, setTimezone] = useState<string>(initialTimezone);
+  const [timeRange, setTimeRange] = useState<TimeRange | undefined>(
     initialTimeRangeStart && initialTimeRangeEnd
       ? {
           start: initialTimeRangeStart,
@@ -125,14 +125,18 @@ export const useURLState = ({
       : undefined,
   );
 
-  const setQueryInURL = (newQuery: string, replace?: boolean) => {
-    const trimmedQuery = newQuery.trim();
-    queryParams.set(QUERY_PARAM_KEY, trimmedQuery);
-    navigate(
-      `${location.pathname}?${queryParams.toString()}`,
-      replace ? { replace: true } : undefined,
-    );
-  };
+  const setQueryInURL = useCallback(
+    (newQuery: string, replace?: boolean) => {
+      const trimmedQuery = newQuery.trim();
+      const newQueryParams = new URLSearchParams(queryParams);
+      newQueryParams.set(QUERY_PARAM_KEY, trimmedQuery);
+      navigate(
+        `${location.pathname}?${newQueryParams.toString()}`,
+        replace ? { replace: true } : undefined,
+      );
+    },
+    [queryParams, navigate, location.pathname],
+  );
 
   const setTenantInURL = (selectedTenant: string) => {
     queryParams.set(QUERY_PARAM_KEY, ''); // reset query when changing tenant
@@ -223,7 +227,16 @@ export const useURLState = ({
         }
       }
     }
-  }, [initialSchema, schema, configLoaded]);
+  }, [
+    initialSchema,
+    schema,
+    configLoaded,
+    config?.schema,
+    setQueryInURL,
+    getDefaultQuery,
+    initialTenant,
+    queryParams,
+  ]);
 
   useEffect(() => {
     const schemaValue = getSchema(queryParams.get(SCHEMA_PARAM_KEY) ?? config?.schema);
@@ -264,7 +277,7 @@ export const useURLState = ({
         end: timeRangeEndValue,
       };
     });
-  }, [queryParams, attributes, config?.schema]);
+  }, [queryParams, attributes, config?.schema, initialQuery]);
 
   return {
     initialQuery,
