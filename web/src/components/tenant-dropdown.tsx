@@ -43,7 +43,7 @@ export const TenantDropdown: FC<TenantDropdownProps> = ({
   ) => {
     const selectedValue = isOption(value) ? value.value : String(value);
     setIsOpen(false);
-    if (selectedValue) {
+    if (selectedValue && selectedValue !== selectedTenant) {
       onTenantSelected?.(selectedValue);
     }
   };
