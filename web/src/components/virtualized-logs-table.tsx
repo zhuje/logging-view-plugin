@@ -2,18 +2,35 @@ import { RowProps, TableColumn } from '@openshift-console/dynamic-plugin-sdk';
 import { Alert } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, ThProps, Tr } from '@patternfly/react-table';
 import { VirtualTableBody } from '@patternfly/react-virtualized-extension';
+import { AutoSizer, WindowScroller } from '@patternfly/react-virtualized-extension';
 import { Scroll } from '@patternfly/react-virtualized-extension/dist/esm/components/Virtualized/types';
+import CellMeasurer, {
+  CellMeasurerCache,
+  MeasuredCellParent,
+} from 'react-virtualized/dist/es/CellMeasurer';
 import classNames from 'classnames';
-import React, { useEffect } from 'react';
+import {
+  ComponentType,
+  CSSProperties,
+  FC,
+  forwardRef,
+  memo,
+  PropsWithChildren,
+  ReactElement,
+  ReactText,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { AutoSizer, CellMeasurer, CellMeasurerCache, WindowScroller } from 'react-virtualized';
-import { MeasuredCellParent } from 'react-virtualized/dist/es/CellMeasurer';
 import { LogTableData, Schema } from '../logs.types';
 import { CenteredContainer } from './centered-container';
 import { ErrorMessage } from './error-message';
 
 interface VirtualizedLogsTableProps<D> {
-  Row: React.ComponentType<RowProps<D>>;
+  Row: ComponentType<RowProps<D>>;
   data: Array<D>;
   columns: TableColumn<D>[];
   getSortParams: (index: number) => ThProps['sort'];
@@ -34,7 +51,7 @@ interface VirtualizedLogsTableProps<D> {
 }
 
 export type TableRowProps = {
-  id: React.ReactText;
+  id: ReactText;
   index: number;
   title?: string;
   trKey: string;
@@ -43,15 +60,14 @@ export type TableRowProps = {
 };
 
 type RowMemoProps<T> = RowProps<T> & {
-  Row: React.ComponentType<RowProps<T>>;
+  Row: ComponentType<RowProps<T>>;
   isScrolling: boolean;
-  style: React.CSSProperties;
+  style: CSSProperties;
 };
 
-const RowMemo = React.memo(
-  ({ Row, isScrolling: _isScrolling, style: _style, ...props }: RowMemoProps<LogTableData>) => (
-    <Row {...props} />
-  ),
+const RowMemo = memo(
+  // eslint-disable-next-line
+  ({ Row, isScrolling, style, ...props }: RowMemoProps<LogTableData>) => <Row {...props} />,
   (_, nextProps) => {
     if (nextProps.isScrolling) {
       return true;
@@ -69,7 +85,7 @@ export type TableDataProps = {
   colSpan?: number;
 };
 
-export const TableData: React.FC<TableDataProps> = ({
+export const TableData: FC<PropsWithChildren<TableDataProps>> = ({
   className,
   id,
   activeColumnIDs,
@@ -84,7 +100,7 @@ export const TableData: React.FC<TableDataProps> = ({
 TableData.displayName = 'TableData';
 
 type VirtualizedTableBodyProps<D, R = unknown> = {
-  Row: React.ComponentType<RowProps<D, R>>;
+  Row: ComponentType<RowProps<D, R>>;
   data: D[];
   height: number;
   isScrolling: boolean;
@@ -101,20 +117,23 @@ type VirtualizedTableBodyProps<D, R = unknown> = {
   showResources?: boolean;
 };
 
-const TableRow: React.FC<TableRowProps> = ({ id, index, trKey, style, className, ...props }) => {
-  return (
-    <Tr
-      {...props}
-      data-id={id}
-      data-index={index}
-      data-test-rows="resource-row"
-      data-key={trKey}
-      style={style}
-      className={classNames('pf-v6-c-table__tr', className)}
-      role="row"
-    />
-  );
-};
+const TableRow = forwardRef<HTMLTableRowElement, PropsWithChildren<TableRowProps>>(
+  ({ id, index, trKey, style, className, ...props }, ref) => {
+    return (
+      <Tr
+        {...props}
+        ref={ref}
+        data-id={id}
+        data-index={index}
+        data-test-rows="resource-row"
+        data-key={trKey}
+        style={style}
+        className={classNames('pf-v6-c-table__tr', className)}
+        role="row"
+      />
+    );
+  },
+);
 TableRow.displayName = 'TableRow';
 
 const VirtualizedTableBody = ({
@@ -133,9 +152,8 @@ const VirtualizedTableBody = ({
   scrollToIndex,
   expandedItems,
   showResources,
-}: // eslint-disable-next-line @typescript-eslint/no-explicit-any
-VirtualizedTableBodyProps<LogTableData, any>) => {
-  const cellMeasurementCache = React.useMemo(
+}: VirtualizedTableBodyProps<LogTableData, any>) => {
+  const cellMeasurementCache = useMemo(
     () =>
       new CellMeasurerCache({
         fixedWidth: true,
@@ -145,8 +163,8 @@ VirtualizedTableBodyProps<LogTableData, any>) => {
     [],
   );
 
-  const tableBodyRef = React.useRef<VirtualTableBody>(null);
-  const isFirstRender = React.useRef(true);
+  const tableBodyRef = useRef<VirtualTableBody>(null);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -155,9 +173,10 @@ VirtualizedTableBodyProps<LogTableData, any>) => {
     }
     cellMeasurementCache.clearAll();
     tableBodyRef.current?.forceUpdateVirtualGrid();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expandedItems, showResources]);
 
-  const activeColumnIDs = React.useMemo(() => new Set(columns.map((c) => c.id)), [columns]);
+  const activeColumnIDs = useMemo(() => new Set(columns.map((c) => c.id)), [columns]);
 
   const rowRenderer = ({
     index,
@@ -169,7 +188,7 @@ VirtualizedTableBodyProps<LogTableData, any>) => {
     index: number;
     isVisible: boolean;
     key: string;
-    style: React.CSSProperties;
+    style: CSSProperties;
     parent: MeasuredCellParent;
   }) => {
     const rowArgs = {
@@ -192,16 +211,19 @@ VirtualizedTableBodyProps<LogTableData, any>) => {
         parent={parent}
         rowIndex={index}
       >
-        <TableRow
-          id={getRowId?.(rowArgs.obj) ?? key}
-          index={index}
-          trKey={key}
-          style={style}
-          title={getRowTitle?.(rowArgs.obj)}
-          className={getRowClassName?.(rowArgs.obj)}
-        >
-          <RowMemo Row={Row} {...rowArgs} style={style} isScrolling={isScrolling} />
-        </TableRow>
+        {({ registerChild }) => (
+          <TableRow
+            ref={registerChild}
+            id={getRowId?.(rowArgs.obj) ?? key}
+            index={index}
+            trKey={key}
+            style={style}
+            title={getRowTitle?.(rowArgs.obj)}
+            className={getRowClassName?.(rowArgs.obj)}
+          >
+            <RowMemo Row={Row} {...rowArgs} style={style} isScrolling={isScrolling} />
+          </TableRow>
+        )}
       </CellMeasurer>
     );
   };
@@ -228,10 +250,6 @@ VirtualizedTableBodyProps<LogTableData, any>) => {
   );
 };
 
-type WithScrollContainerProps = {
-  children: (scrollContainer: HTMLElement) => React.ReactElement | null;
-};
-
 const isHTMLElement = (n: Node): n is HTMLElement => {
   return n.nodeType === Node.ELEMENT_NODE;
 };
@@ -253,9 +271,13 @@ export const getParentScrollableElement = (node: HTMLElement) => {
   return undefined;
 };
 
-export const WithScrollContainer: React.FC<WithScrollContainerProps> = ({ children }) => {
-  const [scrollContainer, setScrollContainer] = React.useState<HTMLElement>();
-  const ref = React.useCallback((node) => {
+type WithScrollContainerProps = {
+  children: (scrollContainer: HTMLElement) => ReactElement | null;
+};
+
+export const WithScrollContainer: FC<WithScrollContainerProps> = ({ children }) => {
+  const [scrollContainer, setScrollContainer] = useState<HTMLElement>();
+  const ref = useCallback((node) => {
     if (node) {
       setScrollContainer(getParentScrollableElement(node));
     }
@@ -284,8 +306,8 @@ export const VirtualizedLogsTable = ({
 }: VirtualizedLogsTableProps<LogTableData>) => {
   const { t } = useTranslation('plugin__logging-view-plugin');
   const colSpan = columns.length + 3;
-  const scrollerRef = React.useRef<WindowScroller>(null);
-  const [scrollToIndex, setScrollToIndex] = React.useState<number | undefined>(undefined);
+  const scrollerRef = useRef<WindowScroller>(null);
+  const [scrollToIndex, setScrollToIndex] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     scrollerRef.current?.updatePosition();

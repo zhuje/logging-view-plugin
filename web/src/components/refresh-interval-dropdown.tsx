@@ -6,10 +6,10 @@ import {
   MenuToggle,
   MenuToggleElement,
 } from '@patternfly/react-core';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { TestIds } from '../test-ids';
+import { FC, Ref, useEffect, useRef, useState } from 'react';
 
 const STORED_REFRESH_INTERVAL_KEY = 'logging-view-plugin.refresh-interval';
 
@@ -31,7 +31,7 @@ interface RefreshIntervalDropdownProps {
   isDisabled?: boolean;
 }
 
-export const RefreshIntervalDropdown: React.FC<RefreshIntervalDropdownProps> = ({
+export const RefreshIntervalDropdown: FC<RefreshIntervalDropdownProps> = ({
   onRefresh,
   isDisabled = false,
 }) => {
@@ -40,15 +40,16 @@ export const RefreshIntervalDropdown: React.FC<RefreshIntervalDropdownProps> = (
   const [storedRefreshInterval, setStoredRefreshInterval] = useLocalStorage<{ interval: string }>(
     STORED_REFRESH_INTERVAL_KEY,
   );
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [selectedIndex, setSelectedIndex] = React.useState<number>(
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState<number>(
     storedRefreshInterval && !isNaN(parseInt(storedRefreshInterval.interval, 10))
       ? parseInt(storedRefreshInterval.interval, 10)
       : 0,
   );
-  const [delay, setDelay] = React.useState<number>(refreshIntervalOptions[selectedIndex].delay);
-  const timer = React.useRef<NodeJS.Timer | null>(null);
-  const onRefreshRef = React.useRef(onRefresh);
+  const [delay, setDelay] = useState<number>(refreshIntervalOptions[selectedIndex].delay);
+  const timer = useRef<NodeJS.Timer | null>(null);
+  const onRefreshRef = useRef(onRefresh);
+  // eslint-disable-next-line react-hooks/refs
   onRefreshRef.current = onRefresh;
 
   const clearTimer = () => {
@@ -65,7 +66,7 @@ export const RefreshIntervalDropdown: React.FC<RefreshIntervalDropdownProps> = (
     setStoredRefreshInterval({ interval: index.toString(10) });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     clearTimer();
 
     if (delay !== 0) {
@@ -86,7 +87,7 @@ export const RefreshIntervalDropdown: React.FC<RefreshIntervalDropdownProps> = (
         isOpen={isOpen}
         onSelect={() => setIsOpen(false)}
         onOpenChange={(isOpenVal: boolean) => setIsOpen(isOpenVal)}
-        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle
             isDisabled={isDisabled}
             ref={toggleRef}

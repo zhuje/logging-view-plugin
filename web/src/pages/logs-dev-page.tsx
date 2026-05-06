@@ -1,8 +1,7 @@
 import { Button, Card, CardBody, Flex, Grid, PageSection, Tooltip } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import {
   availableDevConsoleAttributes,
   filtersFromQuery,
@@ -26,6 +25,7 @@ import { defaultQueryFromTenant, useURLState } from '../hooks/useURLState';
 import { Direction, isMatrixResult } from '../logs.types';
 import { TestIds } from '../test-ids';
 import { getInitialTenantFromNamespace } from '../value-utils';
+import { FC, memo, useEffect, useState } from 'react';
 
 /*
 This comment creates an entry in the translations catalogue for console extensions
@@ -38,12 +38,12 @@ interface LogsDevPageProps {
   ns?: string;
 }
 
-const LogsDevPage: React.FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => {
+const LogsDevPage: FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => {
   const { t } = useTranslation('plugin__logging-view-plugin');
   const { ns: namespaceFromParams } = useParams<{ ns: string }>();
   const namespace = namespaceFromParams || namespaceFromProps;
-  const [isHistogramVisible, setIsHistogramVisible] = React.useState(false);
-  let tenant = getInitialTenantFromNamespace(namespace);
+  const [isHistogramVisible, setIsHistogramVisible] = useState(false);
+  const tenant = getInitialTenantFromNamespace(namespace);
 
   const { config, configLoaded } = useLogsConfig();
 
@@ -179,31 +179,29 @@ const LogsDevPage: React.FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => 
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!configLoaded) {
       return;
     }
-
-    tenant = getInitialTenantFromNamespace(namespace);
 
     const queryToUse = updateQuery(filters, tenant);
 
     runQuery({ queryToUse });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeRange, isHistogramVisible, direction, configLoaded]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!configLoaded) {
       return;
     }
 
-    tenant = getInitialTenantFromNamespace(namespace);
-
-    const filtersWithNamespace = filters ?? {};
+    const filtersWithNamespace = { ...filters };
 
     filtersWithNamespace['namespace'] = new Set(namespace ? [namespace] : []);
     const queryToUse = updateQuery(filtersWithNamespace, tenant);
 
     runQuery({ queryToUse });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [namespace, configLoaded]);
 
   const isQueryEmpty = query === '';
@@ -213,7 +211,7 @@ const LogsDevPage: React.FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => 
 
   const resultIsMetric = isMatrixResult(logsData?.data);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (resultIsMetric) {
       setIsHistogramVisible(false);
     }
@@ -347,7 +345,7 @@ const LogsDevPage: React.FC<LogsDevPageProps> = ({ ns: namespaceFromProps }) => 
   );
 };
 
-const LogsDevPageWrapper: React.FC<LogsDevPageProps> = React.memo((props) => {
+const LogsDevPageWrapper: FC<LogsDevPageProps> = memo((props) => {
   return (
     <LogsConfigProvider>
       <LogsDevPage {...props} />

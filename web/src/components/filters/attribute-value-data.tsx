@@ -1,6 +1,6 @@
-import React from 'react';
 import { Attribute, Filters, Option } from './filter.types';
 import { useBoolean } from '../../hooks/useBoolean';
+import { useCallback, useState } from 'react';
 
 type UseAttributeValueDataHookResult = {
   getAttributeOptions: (filters?: Filters) => void;
@@ -16,11 +16,11 @@ const uniqueOptions = (options: Array<Option>): Array<Option> =>
   });
 
 export const useAttributeValueData = (attribute: Attribute): UseAttributeValueDataHookResult => {
-  const [attributeOptions, setAttributeOptions] = React.useState<Array<Option>>([]);
+  const [attributeOptions, setAttributeOptions] = useState<Array<Option>>([]);
   const { value: attributeLoading, setValue: setAttributeLoading } = useBoolean(true);
-  const [attributeError, setAttributeError] = React.useState<Error | undefined>();
+  const [attributeError, setAttributeError] = useState<Error | undefined>();
 
-  const getAttributeOptions = React.useCallback(
+  const getAttributeOptions = useCallback(
     (filters?: Filters) => {
       setAttributeError(undefined);
       if (attribute.options) {
@@ -45,7 +45,7 @@ export const useAttributeValueData = (attribute: Attribute): UseAttributeValueDa
         }
       }
     },
-    [attribute],
+    [attribute, setAttributeLoading],
   );
 
   return { getAttributeOptions, attributeOptions, attributeError, attributeLoading };

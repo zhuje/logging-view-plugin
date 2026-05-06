@@ -1,8 +1,20 @@
+/* eslint-disable react-hooks/refs */
 import { ResourceLink, RowProps, TableColumn } from '@openshift-console/dynamic-plugin-sdk';
 import { Split, SplitItem } from '@patternfly/react-core';
 import { ISortBy, SortByDirection, Td, ThProps } from '@patternfly/react-table';
-import React, { useCallback, useEffect } from 'react';
-import { Link } from 'react-router-dom-v5-compat';
+import {
+  Children,
+  FC,
+  MouseEvent,
+  MutableRefObject,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Link } from 'react-router';
 import { DateFormat, dateToFormat } from '../date-utils';
 import {
   Direction,
@@ -138,7 +150,7 @@ const columns: Array<TableColumn<LogTableData>> = [
   },
 ];
 
-const ResourceLinkList: React.FC<{
+const ResourceLinkList: FC<{
   resource: Resource;
   data: LogTableData;
 }> = ({ resource, data }) => {
@@ -169,8 +181,8 @@ const ResourceLinkList: React.FC<{
 };
 
 type TableRowProps = {
-  expandedItemsRef: React.MutableRefObject<Set<number>>;
-  handleRowToggle: (e: React.MouseEvent, rowIndex: number) => void;
+  expandedItemsRef: MutableRefObject<Set<number>>;
+  handleRowToggle: (e: MouseEvent, rowIndex: number) => void;
   showResources: boolean;
   colSpan?: number;
 };
@@ -217,7 +229,7 @@ const TableRow = ({ expandedItemsRef, handleRowToggle, showResources, colSpan }:
   };
 };
 
-export const LogsTable: React.FC<LogsTableProps> = ({
+export const LogsTable: FC<PropsWithChildren<LogsTableProps>> = ({
   logsData,
   isLoading,
   isLoadingMore,
@@ -234,15 +246,15 @@ export const LogsTable: React.FC<LogsTableProps> = ({
   hasNamespaceFilter,
   schema,
 }) => {
-  const [expandedItems, setExpandedItems] = React.useState<Set<number>>(new Set());
-  const expandedItemsRef = React.useRef(expandedItems);
+  const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
+  const expandedItemsRef = useRef(expandedItems);
   expandedItemsRef.current = expandedItems;
-  const [prevChildrenCount, setPrevChildrenCount] = React.useState(0);
-  const [sortBy, setSortBy] = React.useState<ISortBy>({
+  const [prevChildrenCount, setPrevChildrenCount] = useState(0);
+  const [sortBy, setSortBy] = useState<ISortBy>({
     index: 1,
     direction: direction === 'backward' ? 'desc' : 'asc',
   });
-  const tableData: Array<LogTableData> = React.useMemo(() => {
+  const tableData: Array<LogTableData> = useMemo(() => {
     const logsTableData = aggregateStreamLogData(logsData, timezone);
 
     const logsTableDataWithExpanded = logsTableData.flatMap((row) => [
@@ -254,10 +266,10 @@ export const LogsTable: React.FC<LogsTableProps> = ({
   }, [logsData, timezone]);
 
   useEffect(() => {
-    setPrevChildrenCount(React.Children.count(children));
+    setPrevChildrenCount(Children.count(children));
   }, [children]);
 
-  const handleRowToggle = useCallback((_event: React.MouseEvent, rowIndex: number) => {
+  const handleRowToggle = useCallback((_event: MouseEvent, rowIndex: number) => {
     setExpandedItems((prev) => {
       const next = new Set(prev);
       if (next.has(rowIndex)) {
@@ -287,8 +299,8 @@ export const LogsTable: React.FC<LogsTableProps> = ({
               tableSortDirection === undefined
                 ? undefined
                 : tableSortDirection === 'desc'
-                ? 'backward'
-                : 'forward',
+                  ? 'backward'
+                  : 'forward',
             );
           }
         },
@@ -298,7 +310,7 @@ export const LogsTable: React.FC<LogsTableProps> = ({
     [sortBy, onSortByDate],
   );
 
-  const prevLogsDataRef = React.useRef(logsData);
+  const prevLogsDataRef = useRef(logsData);
   if (logsData !== prevLogsDataRef.current) {
     const prevData = prevLogsDataRef.current;
     prevLogsDataRef.current = logsData;
@@ -314,7 +326,7 @@ export const LogsTable: React.FC<LogsTableProps> = ({
     }
   }
 
-  const sortedData = React.useMemo(() => {
+  const sortedData = useMemo(() => {
     const dataCopy = [...tableData];
     if (sortBy.index !== undefined && columns[sortBy.index]) {
       const { sort } = columns[sortBy.index];
@@ -335,7 +347,7 @@ export const LogsTable: React.FC<LogsTableProps> = ({
     onLoadMore?.(tableData[tableData.length - 1].timestamp / 1e6);
   };
 
-  const RowComponent = React.useMemo(
+  const RowComponent = useMemo(
     () =>
       TableRow({
         expandedItemsRef,
@@ -376,7 +388,7 @@ export const LogsTable: React.FC<LogsTableProps> = ({
         hasMoreLogsData={hasMoreLogsData}
         onLoadMore={handleLoadMore}
         isLoadingMore={isLoadingMore}
-        shouldResize={showStats || React.Children.count(children) != prevChildrenCount}
+        shouldResize={showStats || Children.count(children) != prevChildrenCount}
         hasNamespaceFilter={hasNamespaceFilter}
         schema={schema}
         expandedItems={expandedItems}

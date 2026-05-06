@@ -239,7 +239,7 @@ const getNamespaceAttributeOptions = (
     return true;
   };
 
-  return () => {
+  return async () => {
     const filteredProjectList = projectsDataSource(tenantFilter)();
     const filteredLokiNamespaceList = lokiLabelValuesDataSource({
       config,
@@ -869,7 +869,7 @@ const getPodAttributeOptions = (
   const namespacesQuery =
     namespaces && namespaces.length > 0
       ? `${namespaceLabel}=~"${namespaces.join('|')}"`
-      : getTenantNamespaceQuery(tenant, namespaceLabel) ?? '';
+      : (getTenantNamespaceQuery(tenant, namespaceLabel) ?? '');
 
   const podResource =
     namespaces && namespaces.length > 0
@@ -933,7 +933,7 @@ const getContainerAttributeOptions = (
   const namespacesQuery =
     namespaces && namespaces.length > 0
       ? `${namespaceLabel}=~"${namespaces.join('|')}"`
-      : getTenantNamespaceQuery(tenant, namespaceLabel) ?? '';
+      : (getTenantNamespaceQuery(tenant, namespaceLabel) ?? '');
 
   const seriesQuery = namespacesQuery
     ? `{ ${containerLabel}!="", ${podLabel}!="", ${namespacesQuery} }`

@@ -1,5 +1,4 @@
 import { WSFactory } from '@openshift-console/dynamic-plugin-sdk/lib/utils/k8s/ws-factory';
-import React from 'react';
 import {
   Config,
   Direction,
@@ -21,6 +20,7 @@ import { millisecondsFromDuration } from '../value-utils';
 
 import { LogQLQuery } from '../logql-query';
 import { LogsContext } from './LogsConfigProvider';
+import { useContext, useReducer, useRef } from 'react';
 
 const DEFAULT_TIME_SPAN = '1h';
 const STREAMING_MAX_LOGS_LIMIT = 1e3;
@@ -249,27 +249,29 @@ export const useLogs = (
     initialTenant: 'application',
   },
 ) => {
-  const currentQuery = React.useRef<string | undefined>();
-  const currentTenant = React.useRef<string>(initialTenant);
-  const currentTimeRange = React.useRef<TimeRange>(initialTimeRange);
-  const currentTime = React.useRef<number>(Date.now());
-  const lastExecutionTime = React.useRef<{ logs?: number; histogram?: number; volume?: number }>({
+  const currentQuery = useRef<string | undefined>();
+  const currentTenant = useRef<string>(initialTenant);
+  const currentTimeRange = useRef<TimeRange>(initialTimeRange);
+  // eslint-disable-next-line react-hooks/purity
+  const currentTime = useRef<number>(Date.now());
+  const lastExecutionTime = useRef<{ logs?: number; histogram?: number; volume?: number }>({
     logs: undefined,
     histogram: undefined,
     volume: undefined,
   });
-  const currentDirection = React.useRef<Direction>('backward');
-  const logsAbort = React.useRef<() => void | undefined>();
-  const histogramAbort = React.useRef<() => void | undefined>();
-  const volumeAbort = React.useRef<() => void | undefined>();
-  const ws = React.useRef<WSFactory | null>();
-  const logsContext = React.useContext(LogsContext);
+  const currentDirection = useRef<Direction>('backward');
+  const logsAbort = useRef<() => void | undefined>();
+  const histogramAbort = useRef<() => void | undefined>();
+  const volumeAbort = useRef<() => void | undefined>();
+  const ws = useRef<WSFactory | null>();
+  const logsContext = useContext(LogsContext);
 
   if (logsContext === undefined) {
     throw new Error('useLogs must be used within a LogsProvider');
   }
 
-  const configRef = React.useRef(logsContext.config);
+  const configRef = useRef(logsContext.config);
+  // eslint-disable-next-line react-hooks/refs
   configRef.current = logsContext.config;
 
   const [
@@ -289,7 +291,7 @@ export const useLogs = (
       isStreaming,
     },
     dispatch,
-  ] = React.useReducer(reducer, {
+  ] = useReducer(reducer, {
     isLoadingHistogramData: false,
     isLoadingLogsData: false,
     isLoadingVolumeData: false,
